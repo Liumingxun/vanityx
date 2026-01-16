@@ -8,15 +8,14 @@
   "license": "ISC",
   "keywords": [],
   "main": "src/index.ts",
-  "bin": "dist/index.js",
+  "bin": "dist/index.cjs",
   "files": [
     "dist",
     "src"
   ],
   "scripts": {
-    "build:guard": "node ./scripts/build.gurad.ts",
-    "build:bin": "node ./scripts/build.bin.ts",
-    "build": "pnpm run /^build:/"
+    "build": "node ./scripts/build.bin.ts",
+    "prepublish": "pnpm run build"
   },
   "dependencies": {
     "viem": "^2.44.2"
