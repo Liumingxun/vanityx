@@ -14,6 +14,7 @@
     "src"
   ],
   "scripts": {
+    "test": "pnpx tsx ./bin/index.ts",
     "build": "node ./scripts/build.bin.ts",
     "prepublish": "pnpm run build"
   },

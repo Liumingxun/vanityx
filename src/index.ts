@@ -1,9 +1,9 @@
 import type { Address, ByteArray, Hex } from 'viem'
 import { calcGuardSalt } from 'createx_guard'
-import { bytesToHex, concat, getContractAddress, hexToBytes, keccak256, slice, stringToBytes } from 'viem'
+import { bytesToHex, getContractAddress, hexToBytes, keccak256 } from 'viem'
 
 interface GetVanityBaseOptions {
-  msgSender: Address
+  msgSender?: Address
   deployer: Address
   matching: (address: Address) => boolean
 }
@@ -16,6 +16,8 @@ type GetVanityOptions
     initCodeHash: Hex
   })
 
+const CREATEX_FACTORY_ADDRESS: Address = '0xba5ed099633d3b313e4d5f7bdc1305d3c28ba5ed' as const
+
 export function getVanity({
   msgSender,
   deployer,
@@ -27,29 +29,34 @@ export function getVanity({
     ? keccak256(initOption.initCode)
     : initOption.initCodeHash
 
-  const saltDefaultBytes: ByteArray = new Uint8Array(21)
-  saltDefaultBytes.set(hexToBytes(msgSender))
-  saltDefaultBytes[21] = 0 // redeployProtectionFlag = false
+  const isCreatexFactory = deployer.toLowerCase() === CREATEX_FACTORY_ADDRESS.toLowerCase()
+
+  const saltBytes: ByteArray = new Uint8Array(32)
 
   const start = performance.now()
   while (true) {
-    const chaos: ByteArray = new Uint8Array(11)
-    chaos.set(slice(stringToBytes(crypto.randomUUID()), 25))
-    const salt = concat([saltDefaultBytes, chaos])
+    crypto.getRandomValues(saltBytes)
+    if (msgSender)
+      saltBytes.set(hexToBytes(msgSender))
 
-    const guardSalt = calcGuardSalt(salt, { msgSender })
+    if (isCreatexFactory)
+      saltBytes[20] = 0
+
+    const salt = isCreatexFactory
+      ? calcGuardSalt(saltBytes, { msgSender })
+      : saltBytes
 
     const address = getContractAddress({
       opcode: 'CREATE2',
       from: deployer,
-      salt: guardSalt,
+      salt,
       bytecodeHash,
     })
 
     if (matching(address)) {
       const end = performance.now()
       return {
-        salt: bytesToHex(salt),
+        salt: bytesToHex(saltBytes),
         address,
         counter,
         timeMs: end - start,
