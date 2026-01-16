@@ -3,7 +3,7 @@ import { bytesToHex, encodeDeployData, encodeFunctionData, getContractAddress, k
 import { hardhat } from 'viem/chains'
 import { bytecode as afloatBytecode } from '../Afloat#Afloat.json'
 import { bytecode as proxyBytecode } from '../Afloat#Proxy.json'
-import { guardedSalt } from './utils'
+import { calcGuardSalt } from './utils'
 
 // create2 deployer address
 const deployer: Address = '0xba5ed099633d3b313e4d5f7bdc1305d3c28ba5ed'
@@ -11,7 +11,7 @@ const deployer: Address = '0xba5ed099633d3b313e4d5f7bdc1305d3c28ba5ed'
 // 0x0000000000000000000000000000000000000000000000000000000000000000
 const salt = new Uint8Array(32)
 // 0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563
-const guardsalt = guardedSalt(salt, deployer, (hardhat.id))
+const guardsalt = calcGuardSalt(salt, deployer, (hardhat.id))
 
 console.table({
   salt: bytesToHex(salt),
