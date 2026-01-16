@@ -1,5 +1,4 @@
 import type { Address, ByteArray, Hex } from 'viem'
-import process from 'node:process'
 import { calcGuardSalt } from 'createx_guard'
 import { bytesToHex, concat, getContractAddress, hexToBytes, keccak256, slice, stringToBytes, stringToHex } from 'viem'
 
@@ -22,7 +21,7 @@ export function getVanity({
   deployer,
   matching,
   ...initOption
-}: GetVanityOptions): { salt: Hex, address: Address } {
+}: GetVanityOptions) {
   let counter = 0n
   const bytecodeHash = 'initCode' in initOption
     ? keccak256(initOption.initCode)
@@ -32,8 +31,8 @@ export function getVanity({
   saltDefaultBytes.set(hexToBytes(msgSender))
   saltDefaultBytes[21] = 0 // redeployProtectionFlag = false
 
+  const start = performance.now()
   while (true) {
-    const start = performance.now()
     const chaos: ByteArray = new Uint8Array(11)
     chaos.set(slice(stringToBytes(crypto.randomUUID()), 25))
     const salt = concat([saltDefaultBytes, chaos])
@@ -49,8 +48,12 @@ export function getVanity({
 
     if (matching(address)) {
       const end = performance.now()
-      process.stdout.end(`Found matching address ${address} in ${(end - start).toFixed(2)} ms with salt ${bytesToHex(salt)} after ${counter} attempts`)
-      return { salt: bytesToHex(salt), address }
+      return {
+        salt: bytesToHex(salt),
+        address,
+        counter,
+        timeMs: end - start,
+      }
     }
     counter++
   }
