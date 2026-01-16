@@ -3,10 +3,10 @@
   "type": "module",
   "version": "1.0.0",
   "packageManager": "pnpm@10.28.0",
-  "description": "",
+  "description": "A library for calculating CREATEX factory guard salts.",
   "author": "",
-  "license": "ISC",
-  "keywords": ["createx"],
+  "license": "MIT",
+  "keywords": ["createx", "contract", "ethereum"],
   "main": "index.ts",
   "peerDependencies": {
     "viem": "^2.44.2"

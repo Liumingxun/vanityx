@@ -3,10 +3,10 @@
   "type": "module",
   "version": "1.0.0",
   "packageManager": "pnpm@10.28.0",
-  "description": "",
+  "description": "Generate vanity Ethereum addresses using CREATE2.",
   "author": "",
   "license": "ISC",
-  "keywords": [],
+  "keywords": ["vanity", "address", "ethereum", "create2"],
   "main": "src/index.ts",
   "bin": "dist/index.cjs",
   "files": [
