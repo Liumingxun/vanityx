@@ -1,6 +1,6 @@
 import type { Address, ByteArray, Hex } from 'viem'
 import { calcGuardSalt } from 'createx_guard'
-import { bytesToHex, concat, getContractAddress, hexToBytes, keccak256, slice, stringToBytes, stringToHex } from 'viem'
+import { bytesToHex, concat, getContractAddress, hexToBytes, keccak256, slice, stringToBytes } from 'viem'
 
 interface GetVanityBaseOptions {
   msgSender: Address
@@ -57,13 +57,4 @@ export function getVanity({
     }
     counter++
   }
-}
-
-if (import.meta.main) {
-  getVanity({
-    deployer: '0xba5ed099633d3b313e4d5f7bdc1305d3c28ba5ed' as Address,
-    msgSender: '0xdeadbeef000000000000000000000000deadbeef' as Address,
-    initCodeHash: stringToHex(crypto.randomUUID()) as Hex,
-    matching: address => address.toLowerCase().startsWith('0xdead'),
-  })
 }

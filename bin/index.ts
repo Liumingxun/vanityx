@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
 import type { Address, Hex } from 'viem'
 import process from 'node:process'
