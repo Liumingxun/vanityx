@@ -6,9 +6,17 @@
   "description": "A library for calculating CREATEX factory guard salts.",
   "author": "",
   "license": "MIT",
-  "keywords": ["createx", "contract", "ethereum"],
+  "keywords": [
+    "createx",
+    "contract",
+    "ethereum",
+    "create2"
+  ],
   "main": "index.ts",
   "peerDependencies": {
     "viem": "^2.44.2"
+  },
+  "devDependencies": {
+    "zod": "^4.3.6"
   }
 }
