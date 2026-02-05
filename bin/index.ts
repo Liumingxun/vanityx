@@ -8,7 +8,7 @@ import { getVanity } from '../src/index'
 const program = new Command()
 
 program
-  .name('vanity2')
+  .name('vanityx')
   .description('Generate vanity addresses using CREATE2')
   .version('1.0.0')
 
