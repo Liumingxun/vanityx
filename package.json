@@ -6,7 +6,13 @@
   "description": "Generate vanity Ethereum addresses using CREATE2.",
   "author": "",
   "license": "ISC",
-  "keywords": ["vanity", "address", "ethereum", "create2", "createx"],
+  "keywords": [
+    "vanity",
+    "address",
+    "ethereum",
+    "create2",
+    "createx"
+  ],
   "main": "src/index.ts",
   "bin": "dist/index.cjs",
   "files": [
@@ -23,6 +29,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^7.0.0",
+    "@types/node": "^22.19.9",
     "commander": "^14.0.2",
     "createx_guard": "workspace:*",
     "esbuild": "latest",

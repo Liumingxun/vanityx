@@ -34,7 +34,7 @@ const SaltSchema = z.union([
 const ComputeGuardedSaltArgsSchema = z.object({
   salt: SaltSchema,
   protection: ProtectionDescriptorSchema.optional(),
-}).superRefine(({ salt: { senderBytes, redeployFlagByte }, protection }, ctx) => {
+}).superRefine(({ salt: { senderBytes, redeployFlagByte, raw }, protection }, ctx) => {
   const senderHex = bytesToHex(senderBytes).toLowerCase()
   const addFlagIssue = (expected: 0 | 1) => {
     if (redeployFlagByte === expected)
@@ -42,13 +42,14 @@ const ComputeGuardedSaltArgsSchema = z.object({
     ctx.addIssue({
       code: 'custom',
       params: {
-        position: [20, 21],
+        indicator: buildIndicator(bytesToHex(raw), [42, 44]),
         expected: expected === 0 ? '0x00' : '0x01',
         received: numberToHex(redeployFlagByte, { size: 1 }),
       },
       message: expected === 0
         ? 'If cross-chain redeploy protection is not provided, salt redeploy flag(21st byte) must be set to 0'
         : 'If cross-chain redeploy protection is enabled, salt redeploy flag(21st byte) must be 1',
+      path: ['salt'],
     })
   }
 
@@ -63,11 +64,12 @@ const ComputeGuardedSaltArgsSchema = z.object({
     ctx.addIssue({
       code: 'custom',
       params: {
-        position: [0, 20],
+        indicator: buildIndicator(bytesToHex(raw), [2, 42]),
         expected: msgSender,
         received: senderHex,
       },
       message: 'If permissioned deploy protection is enabled, salt sender bytes(first 20bytes) must match `permissionedDeploy.msgSender`',
+      path: ['salt'],
     })
   }
 }).transform(({ salt, protection }) => {
@@ -84,4 +86,8 @@ export type ProtectionDescriptor = z.infer<typeof ProtectionDescriptorSchema>
 export {
   ComputeGuardedSaltArgsSchema,
   SaltSchema,
+}
+
+function buildIndicator(wrongValue: string, indicator: [start: number, end: number]) {
+  return `${wrongValue.slice(0, indicator[0])}[${wrongValue.slice(indicator[0], indicator[1])}]${wrongValue.slice(indicator[1])}`
 }
