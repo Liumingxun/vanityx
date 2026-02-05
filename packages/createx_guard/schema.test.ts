@@ -59,7 +59,44 @@ describe('salt schema', () => {
   })
 })
 
+describe('protection descriptor schema', () => {
+  it('rejects empty protection objects', () => {
+    const { success, error } = ComputeGuardedSaltInputSchema.shape.protection.safeParse({
+      crossChainRedeploy: {},
+      permissionedDeploy: {},
+    })
+    expect(success).toBe(false)
+    expect(error?.issues.map(issue => issue.message)).toMatchInlineSnapshot(`
+      [
+        "Address must be a string",
+        "Chain ID must be a number",
+      ]
+    `)
+  })
+})
+
 describe('compute guarded salt input schema', () => {
+  describe('no protections', () => {
+    it('accepts any valid salt when no protections are set', () => {
+      const { success, error } = ComputeGuardedSaltInputSchema.safeParse({
+        salt: buildSalt(OTHER_SENDER, 'ab'),
+      })
+      expect(success).toBe(true)
+      expect(error).toBeUndefined()
+    })
+  })
+
+  describe('optional protection descriptors', () => {
+    it('treats an empty protection object as no-op', () => {
+      const { success, error } = ComputeGuardedSaltInputSchema.safeParse({
+        salt: buildSalt(OTHER_SENDER, 'ab'),
+        protection: {},
+      })
+      expect(success).toBe(true)
+      expect(error).toBeUndefined()
+    })
+  })
+
   describe('permissioned deploy protection', () => {
     const protection = buildPermissionedProtection()
 
@@ -80,7 +117,7 @@ describe('compute guarded salt input schema', () => {
       expect(success).toBe(false)
       expect(error?.issues.map(issue => issue.message)).toMatchInlineSnapshot(`
         [
-          "For permissioned deploy protection, salt sender bytes(first 20bytes) must match permissionedDeploy.msgSender",
+          "If permissioned deploy protection is enabled, salt sender bytes(first 20bytes) must match \`permissionedDeploy.msgSender\`",
         ]
       `)
     })
@@ -94,21 +131,6 @@ describe('compute guarded salt input schema', () => {
       expect(error?.issues.map(issue => issue.message)).toMatchInlineSnapshot(`
         [
           "If cross-chain redeploy protection is not provided, salt redeploy flag(21st byte) must be set to 0",
-        ]
-      `)
-    })
-  })
-
-  describe('cross-chain redeploy protection', () => {
-    it('requires permissioned deploy details when enabled', () => {
-      const { success, error } = ComputeGuardedSaltInputSchema.safeParse({
-        salt: buildSalt(MATCHING_SENDER, '02'),
-        protection: crossChainRedeployProtection,
-      })
-      expect(success).toBe(false)
-      expect(error?.issues.map(issue => issue.message)).toMatchInlineSnapshot(`
-        [
-          "If crossChainRedeploy protection is set, permissionedDeploy.msgSender must also be provided. (Tip: permissionedDeploy.msgSender can be zero address if needed)",
         ]
       `)
     })
@@ -137,8 +159,8 @@ describe('compute guarded salt input schema', () => {
       expect(success).toBe(false)
       expect(error?.issues.map(issue => issue.message)).toMatchInlineSnapshot(`
         [
-          "For permissioned deploy protection, salt sender bytes(first 20bytes) must match permissionedDeploy.msgSender",
-          "For cross-chain redeploy protection, salt redeploy flag(21st byte) must be set to 1",
+          "If permissioned deploy protection is enabled, salt sender bytes(first 20bytes) must match \`permissionedDeploy.msgSender\`",
+          "If cross-chain redeploy protection is enabled, salt redeploy flag(21st byte) must be 1",
         ]
       `)
       expect(error?.issues.filter(i => i.code === 'custom').map(issue => issue.params)).toMatchInlineSnapshot(`
@@ -180,9 +202,37 @@ describe('compute guarded salt input schema', () => {
       expect(success).toBe(false)
       expect(error?.issues.map(issue => issue.message)).toMatchInlineSnapshot(`
         [
-          "If salt sender bytes(first 20bytes) are zero disable cross-chain redeploy protection, salt redeploy flag(21st byte) must be 0",
+          "If cross-chain redeploy protection is not provided, salt redeploy flag(21st byte) must be set to 0",
         ]
       `)
+    })
+
+    it('rejects zero sender salt with cross-chain protection when redeploy flag is not 1', () => {
+      const { success, error } = ComputeGuardedSaltInputSchema.safeParse({
+        salt: buildSalt(ZERO_SENDER, '02'),
+        protection: {
+          ...buildPermissionedProtection(ZERO_SENDER),
+          ...crossChainRedeployProtection,
+        },
+      })
+      expect(success).toBe(false)
+      expect(error?.issues.map(issue => issue.message)).toMatchInlineSnapshot(`
+        [
+          "If cross-chain redeploy protection is enabled, salt redeploy flag(21st byte) must be 1",
+        ]
+      `)
+    })
+
+    it('accepts zero sender salt with cross-chain protection when redeploy flag is 1', () => {
+      const { success, error } = ComputeGuardedSaltInputSchema.safeParse({
+        salt: buildSalt(ZERO_SENDER, '01'),
+        protection: {
+          ...buildPermissionedProtection(ZERO_SENDER),
+          ...crossChainRedeployProtection,
+        },
+      })
+      expect(success).toBe(true)
+      expect(error).toBeUndefined()
     })
   })
 })
