@@ -4,7 +4,6 @@ import { z } from 'zod'
 const AddressSchema = z.string()
   .refine(v => isAddress(v), 'Invalid address format')
 
-// TODO: Refactor to use zod discriminated unions for handling more specific situations.
 const ProtectionDescriptorSchema = z.object({
   permissionedDeploy: z.object({
     msgSender: AddressSchema,
@@ -12,7 +11,14 @@ const ProtectionDescriptorSchema = z.object({
   crossChainRedeploy: z.object({
     chainId: z.number('Chain ID must be a number').nonnegative('Chain ID must be non-negative'),
   }),
-}).partial()
+}).partial().refine((data) => {
+  if (data.crossChainRedeploy && !data.permissionedDeploy)
+    return false
+  return true
+}, {
+  error: 'If crossChainRedeploy protection is set, permissionedDeploy.msgSender must also be provided. (Tip: permissionedDeploy.msgSender can be zero address if needed)',
+  path: ['permissionedDeploy', 'msgSender'],
+})
 
 const SaltSchema = z.union([
   z.string()
@@ -33,40 +39,65 @@ const ComputeGuardedSaltInputSchema = z.object({
   protection: ProtectionDescriptorSchema.optional(),
 }).superRefine(({ salt: { senderBytes, redeployFlagByte }, protection }, ctx) => {
   if (bytesToHex(senderBytes) === zeroAddress) {
-    if (redeployFlagByte !== 0 && redeployFlagByte !== 1) {
+    const maybeXChainProtection = protection?.crossChainRedeploy
+    if (!maybeXChainProtection) {
+      if (redeployFlagByte !== 0) {
+        ctx.addIssue({
+          code: 'custom',
+          params: {
+            position: [20, 21],
+            expected: '0x00',
+            received: numberToHex(redeployFlagByte, { size: 1 }),
+          },
+          message: 'If salt sender bytes(first 20bytes) are zero disable cross-chain redeploy protection, salt redeploy flag(21st byte) must be 0',
+        })
+      }
+    }
+    else if (redeployFlagByte !== 1) {
       ctx.addIssue({
         code: 'custom',
         params: {
           position: [20, 21],
-          expected: '0x00 or 0x01',
+          expected: '0x01',
           received: numberToHex(redeployFlagByte, { size: 1 }),
         },
-        message: 'If salt sender bytes(first 20bytes) are zero, salt redeploy flag(21st byte) must be 0 or 1',
+        message: 'If salt sender bytes(first 20bytes) are zero enable cross-chain redeploy protection, salt redeploy flag(21st byte) must be 1',
       })
     }
+    return
   }
 
   if (!protection)
     return
 
-  const { permissionedDeploy, crossChainRedeploy } = protection
+  const { permissionedDeploy: permissionedProtection, crossChainRedeploy: XChainProtection } = protection
 
-  if (permissionedDeploy) {
-    if (bytesToHex(senderBytes) !== permissionedDeploy.msgSender.toLowerCase()) {
+  if (permissionedProtection) {
+    if (bytesToHex(senderBytes) !== permissionedProtection.msgSender.toLowerCase()) {
       ctx.addIssue({
         code: 'custom',
         params: {
           position: [0, 20],
-          expected: permissionedDeploy.msgSender.toLowerCase(),
+          expected: permissionedProtection.msgSender.toLowerCase(),
           received: bytesToHex(senderBytes),
         },
         message: 'For permissioned deploy protection, salt sender bytes(first 20bytes) must match permissionedDeploy.msgSender',
       })
     }
-  }
-
-  if (crossChainRedeploy) {
-    if (redeployFlagByte !== 1) {
+    if (!XChainProtection) {
+      if (redeployFlagByte !== 0) {
+        ctx.addIssue({
+          code: 'custom',
+          params: {
+            position: [20, 21],
+            expected: '0x00',
+            received: numberToHex(redeployFlagByte, { size: 1 }),
+          },
+          message: 'If cross-chain redeploy protection is not provided, salt redeploy flag(21st byte) must be set to 0',
+        })
+      }
+    }
+    else if (redeployFlagByte !== 1) {
       ctx.addIssue({
         code: 'custom',
         params: {
@@ -75,35 +106,6 @@ const ComputeGuardedSaltInputSchema = z.object({
           received: numberToHex(redeployFlagByte, { size: 1 }),
         },
         message: 'For cross-chain redeploy protection, salt redeploy flag(21st byte) must be set to 1',
-      })
-    }
-  }
-
-  if (ctx.issues.length !== 0)
-    return
-
-  if (permissionedDeploy) {
-    if (redeployFlagByte !== 0 && redeployFlagByte !== 1) {
-      ctx.addIssue({
-        code: 'custom',
-        params: {
-          position: [20, 21],
-          expected: '0x00 or 0x01',
-          received: numberToHex(redeployFlagByte, { size: 1 }),
-        },
-        message: 'For permissioned deploy protection, salt redeploy flag(21st byte) must be 0 or 1',
-      })
-    }
-    // COVERAGE: 如果 redeployFlagByte === 1，但是没有 crossChainRedeploy protection
-    if (redeployFlagByte === 1 && !crossChainRedeploy) {
-      ctx.addIssue({
-        code: 'custom',
-        params: {
-          position: [20, 21],
-          expected: '0x00',
-          received: numberToHex(redeployFlagByte, { size: 1 }),
-        },
-        message: 'If salt redeploy flag(21st byte) is 1, cross-chain redeploy protection must be provided',
       })
     }
   }
