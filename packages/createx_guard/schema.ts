@@ -1,7 +1,7 @@
-import { bytesToHex, hexToBytes, isAddress, isBytes, isHex, numberToHex, zeroAddress } from 'viem'
+import { bytesToHex, hexToBytes, isAddress, isBytes, isHex, numberToHex } from 'viem'
 import { z } from 'zod'
 
-const AddressSchema = z.string('Address must be a string')
+const AddressSchema = z.string('Address is required')
   .refine(v => isAddress(v), 'Invalid address format')
 
 const ProtectionDescriptorSchema = z.object({
@@ -9,7 +9,7 @@ const ProtectionDescriptorSchema = z.object({
     msgSender: AddressSchema,
   }),
   crossChainRedeploy: z.object({
-    chainId: z.number('Chain ID must be a number').nonnegative('Chain ID must be non-negative'),
+    chainId: z.int('Chain ID must be a integer').nonnegative('Chain ID must be non-negative'),
   }),
 }).partial().refine(data => !(data.crossChainRedeploy && !data.permissionedDeploy), {
   error: 'If crossChainRedeploy protection is set, `permissionedDeploy.msgSender` must also be provided. (Tip: `permissionedDeploy.msgSender` can be zero address if needed)',
@@ -31,7 +31,7 @@ const SaltSchema = z.union([
   raw: v,
 }))
 
-const ComputeGuardedSaltInputSchema = z.object({
+const ComputeGuardedSaltArgsSchema = z.object({
   salt: SaltSchema,
   protection: ProtectionDescriptorSchema.optional(),
 }).superRefine(({ salt: { senderBytes, redeployFlagByte }, protection }, ctx) => {
@@ -52,37 +52,36 @@ const ComputeGuardedSaltInputSchema = z.object({
     })
   }
 
-  if (senderHex === zeroAddress) {
-    addFlagIssue(protection?.crossChainRedeploy ? 1 : 0)
-    return
-  }
+  addFlagIssue(protection?.crossChainRedeploy ? 1 : 0)
 
-  if (!protection)
+  if (!protection?.permissionedDeploy)
     return
 
-  const { permissionedDeploy: permissionedProtection, crossChainRedeploy: XChainProtection } = protection
+  const msgSender = protection.permissionedDeploy.msgSender.toLowerCase()
 
-  if (!permissionedProtection)
-    return
-
-  if (senderHex !== permissionedProtection.msgSender.toLowerCase()) {
+  if (senderHex !== msgSender) {
     ctx.addIssue({
       code: 'custom',
       params: {
         position: [0, 20],
-        expected: permissionedProtection.msgSender.toLowerCase(),
+        expected: msgSender,
         received: senderHex,
       },
       message: 'If permissioned deploy protection is enabled, salt sender bytes(first 20bytes) must match `permissionedDeploy.msgSender`',
     })
   }
-
-  addFlagIssue(XChainProtection ? 1 : 0)
+}).transform(({ salt, protection }) => {
+  return {
+    salt: salt.raw,
+    msgSender: protection?.permissionedDeploy?.msgSender,
+    chainId: protection?.crossChainRedeploy?.chainId,
+  }
 })
-export type ComputeGuardedSaltInput = z.input<typeof ComputeGuardedSaltInputSchema>
+
+export type ComputeGuardedSaltInput = z.input<typeof ComputeGuardedSaltArgsSchema>
 export type ProtectionDescriptor = z.infer<typeof ProtectionDescriptorSchema>
 
 export {
-  ComputeGuardedSaltInputSchema,
+  ComputeGuardedSaltArgsSchema,
   SaltSchema,
 }
