@@ -1,44 +1,41 @@
 import type { ComputeGuardedSaltInput } from './schema'
-import { bytesToHex, encodeAbiParameters, keccak256, numberToHex, zeroAddress } from 'viem'
+import { encodeAbiParameters, keccak256, numberToHex } from 'viem'
 import { ComputeGuardedSaltArgsSchema } from './schema'
 
 function computeGuardedSalt(input: ComputeGuardedSaltInput): string {
   const { success, data, error } = ComputeGuardedSaltArgsSchema.safeParse(input)
   if (!success) {
-    throw new Error(error.message, { cause: error.cause })
+    throw error
   }
 
-  const { salt, protection } = data
-  const msgSender = protection.permissionedDeploy?.msgSender
-  const chainId = protection.crossChainRedeploy?.chainId
+  const { salt, msgSender, chainId, permissioned, crosschain } = data
 
-  // All parameters have passed schema validation at this point
-  if (msgSender && chainId) {
-    // https://github.com/pcaversaccio/createx/blob/73d517ef6639a052ce02da245a9d3ccfc185ba6b/src/CreateX.sol#L898-L901
-    if (msgSender.toLowerCase() === zeroAddress) {
-      return keccak256(encodeAbiParameters(
-        [{ type: 'bytes32' }, { type: 'bytes32' }],
-        [numberToHex((chainId), { size: 32 }), bytesToHex(salt)],
-      ))
-    }
-
+  // https://github.com/Liumingxun/vanity2/blob/f75ad02613713e544aec70f2b47220ce96e8f87e/packages/createx_guard/schema.ts#L64-L79
+  if (permissioned && crosschain) {
     // https://github.com/pcaversaccio/createx/blob/73d517ef6639a052ce02da245a9d3ccfc185ba6b/src/CreateX.sol#L889-L891
     return keccak256(encodeAbiParameters(
       [{ type: 'address' }, { type: 'uint256' }, { type: 'bytes32' }],
-      [msgSender, BigInt(chainId), bytesToHex(salt)],
+      [msgSender, BigInt(chainId), salt],
+    ))
+  }
+  else if (permissioned) {
+    // https://github.com/pcaversaccio/createx/blob/73d517ef6639a052ce02da245a9d3ccfc185ba6b/src/CreateX.sol#L892-L894
+    return keccak256(encodeAbiParameters(
+      [{ type: 'address' }, { type: 'bytes32' }],
+      [msgSender, salt],
     ))
   }
 
-  // https://github.com/pcaversaccio/createx/blob/73d517ef6639a052ce02da245a9d3ccfc185ba6b/src/CreateX.sol#L892-L894
-  if (msgSender) {
+  if (crosschain) {
+    // https://github.com/pcaversaccio/createx/blob/73d517ef6639a052ce02da245a9d3ccfc185ba6b/src/CreateX.sol#L898-L901
     return keccak256(encodeAbiParameters(
-      [{ type: 'address' }, { type: 'bytes32' }],
-      [msgSender, bytesToHex(salt)],
+      [{ type: 'bytes32' }, { type: 'bytes32' }],
+      [numberToHex((chainId), { size: 32 }), salt],
     ))
   }
 
   // https://github.com/pcaversaccio/createx/blob/73d517ef6639a052ce02da245a9d3ccfc185ba6b/src/CreateX.sol#L907-L910
-  return keccak256(encodeAbiParameters([{ type: 'bytes32' }], [bytesToHex(salt)]))
+  return keccak256(encodeAbiParameters([{ type: 'bytes32' }], [salt]))
 }
 
 export default computeGuardedSalt
