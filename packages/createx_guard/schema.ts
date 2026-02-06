@@ -75,8 +75,7 @@ const ComputeGuardedSaltArgsSchema = z.object({
 }).transform(({ salt, protection }) => {
   return {
     salt: salt.raw,
-    msgSender: protection?.permissionedDeploy?.msgSender,
-    chainId: protection?.crossChainRedeploy?.chainId,
+    protection: protection ?? {},
   }
 })
 
