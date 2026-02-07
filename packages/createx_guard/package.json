@@ -26,15 +26,13 @@
   "scripts": {
     "test": "vitest --coverage --ui"
   },
-  "peerDependencies": {
-    "viem": "^2.44.2"
-  },
   "dependencies": {
-    "zod": "^4.3.6"
+    "viem": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
-    "@vitest/coverage-v8": "4.0.18",
-    "@vitest/ui": "4.0.18",
-    "vitest": "^4.0.18"
+    "@vitest/coverage-v8": "catalog:",
+    "@vitest/ui": "catalog:",
+    "vitest": "catalog:"
   }
 }

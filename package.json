@@ -25,16 +25,16 @@
     "prepublish": "pnpm run build"
   },
   "dependencies": {
-    "viem": "^2.44.2"
+    "viem": "catalog:"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^7.0.0",
-    "@types/node": "^22.19.9",
-    "commander": "^14.0.2",
+    "@antfu/eslint-config": "catalog:",
+    "@types/node": "catalog:",
+    "commander": "catalog:",
     "createx_guard": "workspace:*",
-    "esbuild": "latest",
-    "eslint": "^9.39.2",
-    "eslint-plugin-format": "^1.3.0"
+    "esbuild": "catalog:",
+    "eslint": "catalog:",
+    "eslint-plugin-format": "catalog:"
   },
   "workspaces": [
     "packages/*"
