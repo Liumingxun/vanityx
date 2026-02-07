@@ -1,19 +1,16 @@
 {
-  "name": "@lime/vanityx",
+  "name": "@lime/createx_guard",
   "version": "1.0.0",
   "license": "MIT",
+  "exports": "./mod.ts",
   "imports": {
-    "#schema": "./src/schema.ts",
-    "@/": "./src/",
-    "viem": "jsr:@wevm/viem@^2.44.2",
+    "viem": "npm:viem@^2.45.1",
     "zod": "npm:zod@^4.3.6"
   },
-  "exports": "./mod.ts",
   "publish": {
     "include": [
       "src",
-      "mod.ts",
-      "types"
+      "mod.ts"
     ]
   }
 }
