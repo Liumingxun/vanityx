@@ -1,7 +1,19 @@
-import type { ComputeGuardedSaltInput } from './schema'
+import type { ComputeGuardedSaltInput } from './schema.ts'
 import { encodeAbiParameters, keccak256, numberToHex } from 'viem'
-import { ComputeGuardedSaltArgsSchema } from './schema'
+import { ComputeGuardedSaltArgsSchema } from './schema.ts'
 
+/**
+ * Computes the guarded salt based on the provided input parameters. The computation logic follows the rules defined in the CreateX contract, taking into account whether the salt is permissioned and/or cross-chain.
+ * @param {ComputeGuardedSaltInput} input The input object containing the salt, msgSender, and optionally chainId for computing the guarded salt.
+ * @returns {string} The computed guarded salt as a hexadecimal string.
+ * @example
+ * const exampleInput: ComputeGuardedSaltInput = {
+ *   salt: '0x0000000000000000000000000000000000000000000000000000000000000000',
+ *   msgSender: '0x1111111111111111111111111111111111111111',
+ *   chainId: 1,
+ * }
+ * computeGuardedSalt(exampleInput)
+ */
 function computeGuardedSalt(input: ComputeGuardedSaltInput): string {
   const { success, data, error } = ComputeGuardedSaltArgsSchema.safeParse(input)
   if (!success) {
@@ -39,3 +51,4 @@ function computeGuardedSalt(input: ComputeGuardedSaltInput): string {
 }
 
 export default computeGuardedSalt
+export type { ComputeGuardedSaltInput }

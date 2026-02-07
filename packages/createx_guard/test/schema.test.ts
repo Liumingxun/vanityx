@@ -1,7 +1,7 @@
 import type { Address, Hex } from 'viem'
 import { ethAddress as ANY_ADDRESS, hexToBytes, zeroAddress as ZERO_ADDRESS } from 'viem'
 import { describe, expect, it } from 'vitest'
-import { ComputeGuardedSaltArgsSchema, SaltSchema } from './schema'
+import { ComputeGuardedSaltArgsSchema, SaltSchema } from '@/schema.ts'
 
 describe('salt schema', () => {
   describe('basic validation', () => {
