@@ -1,0 +1,7 @@
+{
+  "imports": {
+    "@/": "./src/",
+    "viem": "jsr:@wevm/viem@^2.44.2",
+    "zod": "npm:zod@^4.3.6"
+  }
+}
