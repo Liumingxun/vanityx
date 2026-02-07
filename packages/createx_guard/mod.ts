@@ -1,3 +1,6 @@
+import type { ComputeGuardedSaltInput } from './src/schema.ts'
+import computeGuardedSalt from './src/compute.ts'
+
 /**
  * A utility module for computing guarded salts based on specific input parameters, following the rules defined in the CreateX contract. This module provides a function to compute the guarded salt and includes schema validation to ensure correct input formats.
  * @example
@@ -14,4 +17,5 @@
  * ```
  * @module
  */
-export * from './src/compute.ts'
+export { computeGuardedSalt }
+export type { ComputeGuardedSaltInput }

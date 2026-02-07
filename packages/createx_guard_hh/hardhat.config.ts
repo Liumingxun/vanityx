@@ -6,6 +6,13 @@ export default defineConfig({
   paths: {
     tests: './tests',
   },
+  ignition: {
+    strategyConfig: {
+      create2: {
+        salt: '0x0000000000000000000000000000000000000000000000000000000000000000',
+      },
+    },
+  },
   solidity: {
     profiles: {
       default: {
