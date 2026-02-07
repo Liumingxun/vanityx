@@ -1,12 +1,18 @@
 {
-  "name": "vanity2",
+  "name": "vanityx",
   "type": "module",
   "version": "1.0.0",
   "packageManager": "pnpm@10.28.0",
   "description": "Generate vanity Ethereum addresses using CREATE2.",
   "author": "",
   "license": "ISC",
-  "keywords": ["vanity", "address", "ethereum", "create2"],
+  "keywords": [
+    "vanity",
+    "address",
+    "ethereum",
+    "create2",
+    "createx"
+  ],
   "main": "src/index.ts",
   "bin": "dist/index.cjs",
   "files": [
@@ -19,16 +25,17 @@
     "prepublish": "pnpm run build"
   },
   "dependencies": {
-    "viem": "^2.44.2"
+    "viem": "catalog:"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^7.0.0",
-    "@types/bun": "^1.3.6",
-    "commander": "^14.0.2",
+    "@antfu/eslint-config": "catalog:",
+    "@types/node": "catalog:",
+    "commander": "catalog:",
     "createx_guard": "workspace:*",
-    "esbuild": "latest",
-    "eslint": "^9.39.2",
-    "eslint-plugin-format": "^1.3.0"
+    "esbuild": "catalog:",
+    "eslint": "catalog:",
+    "eslint-plugin-format": "catalog:",
+    "typescript": "catalog:"
   },
   "workspaces": [
     "packages/*"
