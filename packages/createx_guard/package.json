@@ -12,10 +12,17 @@
     "ethereum",
     "create2"
   ],
+  "imports": {
+    "#schema": "./src/schema.ts"
+  },
   "exports": {
     ".": "./mod.ts"
   },
   "main": "mod.ts",
+  "types": "./types",
+  "files": [
+    "./src"
+  ],
   "scripts": {
     "test": "vitest --coverage --ui"
   },

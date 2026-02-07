@@ -1,6 +1,12 @@
-import type { ComputeGuardedSaltInput } from './schema.ts'
+import type { ByteArray } from 'viem'
+import { ComputeGuardedSaltArgsSchema } from '#schema'
 import { encodeAbiParameters, keccak256, numberToHex } from 'viem'
-import { ComputeGuardedSaltArgsSchema } from './schema.ts'
+
+interface ComputeGuardedSaltInput {
+  salt: string | ByteArray
+  msgSender: string
+  chainId?: number | undefined
+}
 
 /**
  * Computes the guarded salt based on the provided input parameters. The computation logic follows the rules defined in the CreateX contract, taking into account whether the salt is permissioned and/or cross-chain.

@@ -14,4 +14,4 @@
  * ```
  * @module
  */
-export * from '@/compute.ts'
+export * from './src/compute.ts'

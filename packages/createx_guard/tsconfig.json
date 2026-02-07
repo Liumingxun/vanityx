@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "esnext",
     "moduleDetection": "force",
+    "rootDir": "./",
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "paths": {
@@ -12,12 +13,14 @@
     "exactOptionalPropertyTypes": true,
     "noUncheckedIndexedAccess": true,
     "declaration": true,
-    "declarationMap": true,
-    "noEmit": true,
-    "sourceMap": true,
+    "declarationDir": "./types",
+    "emitDeclarationOnly": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "noUncheckedSideEffectImports": true,
     "skipLibCheck": true
-  }
+  },
+  "exclude": [
+    "tests"
+  ]
 }

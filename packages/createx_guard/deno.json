@@ -1,0 +1,19 @@
+{
+  "name": "@lime/vanityx",
+  "version": "1.0.0",
+  "license": "MIT",
+  "imports": {
+    "#schema": "./src/schema.ts",
+    "@/": "./src/",
+    "viem": "jsr:@wevm/viem@^2.44.2",
+    "zod": "npm:zod@^4.3.6"
+  },
+  "exports": "./mod.ts",
+  "publish": {
+    "include": [
+      "src",
+      "mod.ts",
+      "types"
+    ]
+  }
+}
