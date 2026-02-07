@@ -1,0 +1,26 @@
+{
+  "name": "createx_guard_hh",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.28.0",
+  "description": "",
+  "author": "",
+  "license": "AGPL-3.0-only",
+  "keywords": [],
+  "main": "index.js",
+  "scripts": {
+    "build": "hardhat compile --force"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ignition": "catalog:",
+    "@nomicfoundation/hardhat-toolbox-viem": "catalog:",
+    "@types/node": "catalog:",
+    "createx_guard": "workspace:*",
+    "forge-std": "catalog:",
+    "hardhat": "catalog:",
+    "typescript": "catalog:",
+    "viem": "catalog:",
+    "vitest": "catalog:"
+  }
+}

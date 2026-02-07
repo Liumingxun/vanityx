@@ -1,0 +1,2 @@
+forge-std/=packages/createx_guard_hh/node_modules/forge-std/src/
+hardhat/=packages/createx_guard_hh/node_modules/hardhat/

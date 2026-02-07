@@ -10,4 +10,7 @@ export default antfu({
   ignores: [
     '**/types/**',
   ],
+  rules: {
+    'pnpm/yaml-enforce-settings': 'off',
+  },
 })

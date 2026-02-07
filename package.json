@@ -34,7 +34,8 @@
     "createx_guard": "workspace:*",
     "esbuild": "catalog:",
     "eslint": "catalog:",
-    "eslint-plugin-format": "catalog:"
+    "eslint-plugin-format": "catalog:",
+    "typescript": "catalog:"
   },
   "workspaces": [
     "packages/*"
