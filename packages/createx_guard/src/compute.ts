@@ -40,8 +40,7 @@ function computeGuardedSalt(input: ComputeGuardedSaltInput): string {
       [msgSender, salt],
     ))
   }
-
-  if (crosschain) {
+  else if (crosschain) {
     // https://github.com/pcaversaccio/createx/blob/73d517ef6639a052ce02da245a9d3ccfc185ba6b/src/CreateX.sol#L898-L901
     return keccak256(encodeAbiParameters(
       [{ type: 'bytes32' }, { type: 'bytes32' }],

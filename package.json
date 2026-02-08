@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "packageManager": "pnpm@10.28.0",
   "description": "Generate vanity Ethereum addresses using CREATE2.",
-  "author": "",
+  "author": "lime <liumingxun@yeah.net>",
   "license": "ISC",
   "keywords": [
     "vanity",
@@ -25,10 +25,13 @@
     "prepublish": "pnpm run build"
   },
   "dependencies": {
-    "viem": "catalog:"
+    "micromatch": "catalog:",
+    "viem": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:",
+    "@types/micromatch": "catalog:",
     "@types/node": "catalog:",
     "commander": "catalog:",
     "createx_guard": "workspace:*",
