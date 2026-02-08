@@ -2,7 +2,10 @@
   "name": "@lime/createx_guard",
   "version": "1.0.0",
   "license": "MIT",
-  "exports": "./mod.ts",
+  "exports": {
+    ".": "./mod.ts",
+    "./schema": "./src/schema.ts"
+  },
   "imports": {
     "viem": "npm:viem@^2.45.1",
     "zod": "npm:zod@^4.3.6"

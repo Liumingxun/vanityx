@@ -23,12 +23,7 @@ interface ComputeGuardedSaltInput {
  * ```
  */
 function computeGuardedSalt(input: ComputeGuardedSaltInput): string {
-  const { success, data, error } = ComputeGuardedSaltArgsSchema.safeParse(input)
-  if (!success) {
-    throw error
-  }
-
-  const { salt, msgSender, chainId, permissioned, crosschain } = data
+  const { salt, msgSender, chainId, permissioned, crosschain } = ComputeGuardedSaltArgsSchema.parse(input)
 
   // https://github.com/Liumingxun/vanity2/blob/f75ad02613713e544aec70f2b47220ce96e8f87e/packages/createx_guard/schema.ts#L64-L79
   if (permissioned && crosschain) {

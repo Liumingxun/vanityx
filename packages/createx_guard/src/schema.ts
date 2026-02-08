@@ -89,9 +89,11 @@ const ComputeGuardedSaltArgsSchema = z.object({
   }
 }).pipe(z.transform(v => ComputeGuardedSaltTransformedArgsSchema.parse(v)))
 
-export type ComputeGuardedSaltInput = z.input<typeof ComputeGuardedSaltArgsSchema>
-
 export {
+  AddressSchema,
+  ChainIdSchema,
   ComputeGuardedSaltArgsSchema,
+  SaltBytesSchema,
+  SaltHexSchema,
   SaltSchema,
 }
