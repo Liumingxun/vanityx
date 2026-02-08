@@ -1,21 +1,11 @@
-import type { Address, Hex } from 'viem'
 import { AddressSchema, ChainIdSchema } from 'createx_guard/schema'
-import mm from 'micromatch'
-import { bytesToHex, hexToBytes, isHash, isHex, keccak256, zeroAddress } from 'viem'
+import { bytesToHex, hexToBytes, isHash, isHex, keccak256 } from 'viem'
 import { z } from 'zod'
 
 const HexPatternSchema = z.string().refine(h => isHex(h, { strict: false }), 'Invalid hex pattern, must start with 0x')
 const HashPatternSchema = HexPatternSchema.refine(h => isHash(h), 'Invalid hash pattern, must be a 32-byte hex string')
 
-function AddressMatchSchema(pattern: Hex) {
-  const hexPattern = HexPatternSchema.encode(pattern)
-
-  return AddressSchema.refine(addr => mm.isMatch(addr, hexPattern), {
-    message: `Address does not match pattern ${hexPattern}`,
-  })
-}
-
-export const CREATEX_FACTORY_ADDRESS: Address = '0xba5ed099633d3b313e4d5f7bdc1305d3c28ba5ed' as const
+export const CREATEX_FACTORY_ADDRESS = '0xba5ed099633d3b313e4d5f7bdc1305d3c28ba5ed' as const
 const CreateXOptionsSchema = z.object({
   crosschain: z.boolean(),
   permissioned: z.boolean(),
@@ -77,6 +67,5 @@ const SearchVanityArgsSchema = SearchVanityBaseArgsSchema.and(
   })
 
 export {
-  AddressMatchSchema,
   SearchVanityArgsSchema,
 }

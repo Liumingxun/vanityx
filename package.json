@@ -23,9 +23,7 @@
     "src"
   ],
   "scripts": {
-    "test": "pnpx tsx ./bin/index.ts",
-    "build": "node ./scripts/build.bin.ts",
-    "prepublish": "pnpm run build"
+    "test": "find ./tests -name \"*.case.ts\" | xargs -P4 -I{} bash -c 'time pnpx tsx {}'"
   },
   "dependencies": {
     "micromatch": "catalog:",

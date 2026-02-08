@@ -1,6 +1,7 @@
 import type { Address, Hex } from 'viem'
-import { AddressMatchSchema, CREATEX_FACTORY_ADDRESS, SearchVanityArgsSchema } from '#schema'
+import { CREATEX_FACTORY_ADDRESS, SearchVanityArgsSchema } from '#schema'
 import { computeGuardedSalt } from 'createx_guard'
+import mm from 'micromatch'
 import { bytesToHex, getContractAddress } from 'viem'
 
 interface SearchVanityBaseInput {
@@ -22,6 +23,8 @@ export type SearchVanityInput = SearchVanityBaseInput & ({
 
 export interface SearchVanityResult {
   salt: Hex
+  address: Address
+  guardedSalt?: Hex
 }
 
 function searchVanity(input: SearchVanityInput): SearchVanityResult {
@@ -32,17 +35,19 @@ function searchVanity(input: SearchVanityInput): SearchVanityResult {
   const prefilledLength = saltPrefixBytes.length
 
   const isCreateX = from === CREATEX_FACTORY_ADDRESS
-  const addressPattern = AddressMatchSchema(pattern)
 
   while (true) {
     crypto.getRandomValues(saltBytes.subarray(prefilledLength))
+    const rawSalt = bytesToHex(saltBytes)
     const salt = isCreateX
       ? computeGuardedSalt({
-          salt: saltBytes,
+          salt: rawSalt,
           msgSender,
+          crosschain: !!input.createxOpts?.crosschain,
+          permissioned: !!input.createxOpts?.permissioned,
           chainId,
         })
-      : saltBytes
+      : rawSalt
 
     const address = getContractAddress({
       opcode: 'CREATE2',
@@ -50,10 +55,17 @@ function searchVanity(input: SearchVanityInput): SearchVanityResult {
       bytecodeHash,
       from,
     })
-    const { success } = addressPattern.safeEncode(address)
-    if (success) {
+    if (mm.isMatch(address, pattern)) {
+      if (isCreateX) {
+        return {
+          salt: rawSalt,
+          guardedSalt: salt,
+          address,
+        }
+      }
       return {
-        salt: bytesToHex(saltBytes),
+        salt,
+        address,
       }
     }
   }
