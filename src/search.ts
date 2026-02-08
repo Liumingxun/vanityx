@@ -1,7 +1,7 @@
 import type { Address, Hex } from 'viem'
 import { CREATEX_FACTORY_ADDRESS, SearchVanityArgsSchema } from '#schema'
 import { computeGuardedSalt } from 'createx_guard'
-import mm from 'micromatch'
+import { isMatch } from 'micromatch'
 import { bytesToHex, getContractAddress } from 'viem'
 
 interface SearchVanityBaseInput {
@@ -55,7 +55,7 @@ function searchVanity(input: SearchVanityInput): SearchVanityResult {
       bytecodeHash,
       from,
     })
-    if (mm.isMatch(address, pattern)) {
+    if (isMatch(address, pattern)) {
       if (isCreateX) {
         return {
           salt: rawSalt,

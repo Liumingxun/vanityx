@@ -16,20 +16,17 @@
   "imports": {
     "#schema": "./src/schema.ts"
   },
-  "main": "src/index.ts",
-  "bin": "dist/index.cjs",
+  "bin": {
+    "vanityx": "./dist/index.mjs"
+  },
   "files": [
     "dist",
     "src"
   ],
   "scripts": {
     "test": "find ./tests -name \"*.case.ts\" | xargs -P4 -I{} bash -c 'time pnpx tsx {}'",
-    "build:bin": "pnpx tsx scripts/build.bin.ts"
-  },
-  "dependencies": {
-    "micromatch": "catalog:",
-    "viem": "catalog:",
-    "zod": "catalog:"
+    "build": "tsdown",
+    "prepublish": "pnpm run build"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:",
@@ -37,10 +34,13 @@
     "@types/node": "catalog:",
     "commander": "catalog:",
     "createx_guard": "workspace:*",
-    "esbuild": "catalog:",
     "eslint": "catalog:",
     "eslint-plugin-format": "catalog:",
-    "typescript": "catalog:"
+    "micromatch": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "viem": "catalog:",
+    "zod": "catalog:"
   },
   "workspaces": [
     "packages/*"
