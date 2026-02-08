@@ -29,14 +29,14 @@ describe('salt schema', () => {
       const hexSalt: Hex = `0x${'01'.repeat(20)}02${'00'.repeat(11)}`
       const { success: successHex, data: dataHex } = SaltSchema.safeParse(hexSalt)
       expect(successHex).toBe(true)
-      expect(dataHex?.senderBytes).toEqual(new Uint8Array(20).fill(1))
-      expect(dataHex?.redeployFlagByte).toBe(2)
+      expect(dataHex?.senderHex).toMatchInlineSnapshot('"0x0101010101010101010101010101010101010101"')
+      expect(dataHex?.redeployFlag).toBe(2)
 
       const byteArraySalt = hexToBytes(hexSalt)
       const { success: successBytes, data: dataBytes } = SaltSchema.safeParse(byteArraySalt)
       expect(successBytes).toBe(true)
-      expect(dataBytes?.senderBytes).toEqual(new Uint8Array(20).fill(1))
-      expect(dataBytes?.redeployFlagByte).toBe(2)
+      expect(dataBytes?.senderHex).toMatchInlineSnapshot('"0x0101010101010101010101010101010101010101"')
+      expect(dataBytes?.redeployFlag).toBe(2)
     })
   })
 })

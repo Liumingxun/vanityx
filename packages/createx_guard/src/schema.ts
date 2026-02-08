@@ -14,37 +14,39 @@ const SaltBytesSchema = z.union([
 ]).transform(v => typeof v === 'string' ? hexToBytes(v) : v)
 const SaltHexSchema = SaltBytesSchema.transform(v => bytesToHex(v))
 const SaltSchema = SaltBytesSchema.transform(v => ({
-  senderBytes: v.slice(0, 20),
-  redeployFlagByte: v[20],
+  senderHex: bytesToHex(v.slice(0, 20)).toLowerCase(),
+  redeployFlag: v[20],
   raw: v,
 }))
 
 const ComputeGuardedSaltTransformedBaseArgsSchema = z.object({
   salt: SaltHexSchema,
   msgSender: AddressSchema,
-  chainId: ChainIdSchema.optional(),
-  crosschain: z.boolean(),
   permissioned: z.boolean(),
 })
-const ComputeGuardedSaltTransformedArgsSchema = z.discriminatedUnion('crosschain', [
-  ComputeGuardedSaltTransformedBaseArgsSchema.extend({
-    chainId: z.undefined(),
-    crosschain: z.literal(false),
-  }),
-  ComputeGuardedSaltTransformedBaseArgsSchema.extend({
-    chainId: ChainIdSchema,
-    crosschain: z.literal(true),
-  }),
-])
+const ComputeGuardedSaltTransformedArgsSchema = z.discriminatedUnion(
+  'crosschain',
+  [
+    z.object({
+      ...ComputeGuardedSaltTransformedBaseArgsSchema.shape,
+      chainId: z.never().optional(),
+      crosschain: z.literal(false),
+    }),
+    z.object({
+      ...ComputeGuardedSaltTransformedBaseArgsSchema.shape,
+      chainId: ChainIdSchema,
+      crosschain: z.literal(true),
+    }),
+  ],
+)
 
 const ComputeGuardedSaltArgsSchema = z.object({
   salt: SaltSchema,
-  msgSender: AddressSchema,
+  msgSender: AddressSchema.toLowerCase(),
   chainId: ChainIdSchema.optional(),
-}).superRefine(({ salt: { senderBytes, redeployFlagByte, raw }, msgSender, chainId }, ctx) => {
-  const senderHex = bytesToHex(senderBytes).toLowerCase()
-  if (senderHex === zeroAddress || senderHex === msgSender.toLowerCase()) {
-    if (redeployFlagByte !== 0 && redeployFlagByte !== 1) {
+}).superRefine(({ salt: { senderHex, redeployFlag, raw }, msgSender, chainId }, ctx) => {
+  if (senderHex === zeroAddress || senderHex === msgSender) {
+    if (redeployFlag !== 0 && redeployFlag !== 1) {
       ctx.addIssue({
         code: 'invalid_value',
         values: [bytesToHex(raw)],
@@ -52,7 +54,7 @@ const ComputeGuardedSaltArgsSchema = z.object({
         message: 'When the first 20 bytes matches the caller address or is zero address, the cross-chain redeploy protection flag must be explicitly specified as either 0 or 1 at the 21st byte.',
       })
     }
-    else if (redeployFlagByte === 1 && !chainId) {
+    else if (redeployFlag === 1 && !chainId) {
       ctx.addIssue({
         code: 'invalid_type',
         expected: 'int',
@@ -60,7 +62,7 @@ const ComputeGuardedSaltArgsSchema = z.object({
       })
     }
   }
-}).transform(({ salt, msgSender, chainId }) => {
+}).transform(({ salt: { senderHex, redeployFlag, raw }, msgSender, chainId }) => {
   // +-------------+------------------+--------------+------------+
   // | SenderBytes | RedeployFlagByte | permissioned | crosschain |
   // +-------------+------------------+--------------+------------+
@@ -76,12 +78,11 @@ const ComputeGuardedSaltArgsSchema = z.object({
   // +-------------+------------------+                           |
   // | any         |         0        |                           |
   // +-------------+------------------+---------------------------+
-  const saltSenderHex = bytesToHex(salt.senderBytes).toLowerCase()
-  const permissioned = saltSenderHex === msgSender.toLowerCase()
-  const crosschain = (permissioned || saltSenderHex === zeroAddress) && salt.redeployFlagByte === 1
+  const permissioned = senderHex === msgSender
+  const crosschain = (permissioned || senderHex === zeroAddress) && redeployFlag === 1
 
   return {
-    salt: bytesToHex(salt.raw),
+    salt: bytesToHex(raw),
     msgSender,
     chainId: crosschain ? chainId : undefined,
     permissioned,

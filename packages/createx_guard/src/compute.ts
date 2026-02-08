@@ -1,17 +1,17 @@
-import type { ByteArray } from 'viem'
+import type { Address, ByteArray, Hex } from 'viem'
 import { ComputeGuardedSaltArgsSchema } from '#schema'
 import { encodeAbiParameters, keccak256, numberToHex } from 'viem'
 
 interface ComputeGuardedSaltInput {
-  salt: string | ByteArray
-  msgSender: string
+  salt: Hex | ByteArray
+  msgSender: Address
   chainId?: number | undefined
 }
 
 /**
  * Computes the guarded salt based on the provided input parameters. The computation logic follows the rules defined in the CreateX contract, taking into account whether the salt is permissioned and/or cross-chain.
  * @param {ComputeGuardedSaltInput} input The input object containing the salt, msgSender, and optionally chainId for computing the guarded salt.
- * @returns {string} The computed guarded salt as a hexadecimal string.
+ * @returns {Hex} The computed guarded salt as a hexadecimal string.
  * @example
  * ```ts
  * const exampleInput: ComputeGuardedSaltInput = {
@@ -22,7 +22,7 @@ interface ComputeGuardedSaltInput {
  * computeGuardedSalt(exampleInput)
  * ```
  */
-function computeGuardedSalt(input: ComputeGuardedSaltInput): string {
+function computeGuardedSalt(input: ComputeGuardedSaltInput): Hex {
   const { salt, msgSender, chainId, permissioned, crosschain } = ComputeGuardedSaltArgsSchema.parse(input)
 
   // https://github.com/Liumingxun/vanity2/blob/f75ad02613713e544aec70f2b47220ce96e8f87e/packages/createx_guard/schema.ts#L64-L79
