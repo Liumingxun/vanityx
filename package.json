@@ -23,7 +23,8 @@
     "src"
   ],
   "scripts": {
-    "test": "find ./tests -name \"*.case.ts\" | xargs -P4 -I{} bash -c 'time pnpx tsx {}'"
+    "test": "find ./tests -name \"*.case.ts\" | xargs -P4 -I{} bash -c 'time pnpx tsx {}'",
+    "build:bin": "pnpx tsx scripts/build.bin.ts"
   },
   "dependencies": {
     "micromatch": "catalog:",

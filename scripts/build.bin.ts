@@ -6,6 +6,6 @@ esbuild.build({
   platform: 'node',
   outfile: 'dist/index.cjs',
   minify: false,
-  sourcemap: 'inline',
+  sourcemap: false,
   treeShaking: true,
 })
