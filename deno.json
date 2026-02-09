@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "@/schema.ts": "./src/schema.ts",
+    "@/search.ts": "./src/search.ts"
+  }
+}

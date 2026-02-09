@@ -136,5 +136,5 @@ function searchVanity(input: SearchVanityInput, options?: SearchVanityOptions): 
   return null // unreachable
 }
 
-export { searchVanity }
-export type { SearchVanityAttempt, SearchVanityInput, SearchVanityIteratorInput, SearchVanityOptions, SearchVanityResult }
+export { searchVanity, searchVanityIterator }
+export type { SearchVanityAttempt, SearchVanityInput, SearchVanityIteratorInput, SearchVanityOptions, SearchVanityResult, SearchVanityStats }

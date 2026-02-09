@@ -15,6 +15,7 @@ catalog:
   forge-std: github:foundry-rs/forge-std#v1
   hardhat: ^3.1.7
   micromatch: ^4.0.8
+  mitata: ^1.0.34
   tsdown: ^0.20.3
   typescript: ~5.8.3
   viem: ^2.45.1

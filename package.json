@@ -24,7 +24,7 @@
     "src"
   ],
   "scripts": {
-    "test": "find ./tests -name \"*.case.ts\" | xargs -P4 -I{} bash -c 'time pnpx tsx {}'",
+    "bench": "bun run --sequential bench/*.bench.ts",
     "build": "tsdown",
     "prepublish": "pnpm run build"
   },
@@ -37,6 +37,7 @@
     "eslint": "catalog:",
     "eslint-plugin-format": "catalog:",
     "micromatch": "catalog:",
+    "mitata": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "viem": "catalog:",

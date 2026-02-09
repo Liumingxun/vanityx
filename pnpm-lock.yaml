@@ -45,6 +45,9 @@ catalogs:
     micromatch:
       specifier: ^4.0.8
       version: 4.0.8
+    mitata:
+      specifier: ^1.0.34
+      version: 1.0.34
     tsdown:
       specifier: ^0.20.3
       version: 0.20.3
@@ -89,6 +92,9 @@ importers:
       micromatch:
         specifier: 'catalog:'
         version: 4.0.8
+      mitata:
+        specifier: 'catalog:'
+        version: 1.0.34
       tsdown:
         specifier: 'catalog:'
         version: 0.20.3(synckit@0.11.12)(typescript@5.8.3)
@@ -2381,6 +2387,9 @@ packages:
 
   minimist@1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
+
+  mitata@1.0.34:
+    resolution: {integrity: sha512-Mc3zrtNBKIMeHSCQ0XqRLo1vbdIx1wvFV9c8NJAiyho6AjNfMY8bVhbS12bwciUdd1t4rj8099CH3N3NFahaUA==}
 
   mlly@1.8.0:
     resolution: {integrity: sha512-l8D9ODSRWLe2KHJSifWGwBqpTZXIXTeo8mlKjY+E2HAakaTeNpqAyBZ8GSqLzHgw4XmHmC8whvpjJNMbFZN7/g==}
@@ -5452,6 +5461,8 @@ snapshots:
       brace-expansion: 2.0.2
 
   minimist@1.2.8: {}
+
+  mitata@1.0.34: {}
 
   mlly@1.8.0:
     dependencies:
