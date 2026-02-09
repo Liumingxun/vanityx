@@ -38,12 +38,13 @@ const SearchVanityArgsSchema = SearchVanityBaseArgsSchema.and(
     return true
   }, 'When crosschain option is enabled, chainId must be provided')
   .transform(({ msgSender, createxOpts, ...rest }) => {
-    const { permissioned, crosschain } = createxOpts
+    const { permissioned = false, crosschain = false } = createxOpts
 
     if (!permissioned && !crosschain) {
       return {
-        msgSender: bytesToHex(msgSender),
         saltPrefixBytes: new Uint8Array(0),
+        permissioned,
+        crosschain,
         ...rest,
       }
     }
@@ -60,8 +61,9 @@ const SearchVanityArgsSchema = SearchVanityBaseArgsSchema.and(
       saltPrefixBytes.fill(1, 20)
     }
     return {
-      msgSender: bytesToHex(msgSender),
       saltPrefixBytes,
+      permissioned,
+      crosschain,
       ...rest,
     }
   })

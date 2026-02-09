@@ -1,5 +1,5 @@
 import type { Hex } from 'viem'
-import { computeGuardedSalt as _guard } from 'createx_guard'
+import { getGuardedSalt as _guard } from 'createx_guard'
 import { network } from 'hardhat'
 import { isAddress, ethAddress as SELF_ADDRESS, zeroAddress as ZERO_ADDRESS } from 'viem'
 import { describe, expect, it } from 'vitest'

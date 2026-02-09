@@ -1,7 +1,7 @@
-import type { Address, Hex } from 'viem'
+import type { Address, ByteArray, Hash, Hex } from 'viem'
 import { CREATEX_FACTORY_ADDRESS, SearchVanityArgsSchema } from '#schema'
 import { computeGuardedSalt } from 'createx_guard'
-import { isMatch } from 'micromatch'
+import mm from 'micromatch'
 import { bytesToHex, getContractAddress } from 'viem'
 
 interface SearchVanityBaseInput {
@@ -15,36 +15,70 @@ interface SearchVanityBaseInput {
   } | undefined
 }
 
-export type SearchVanityInput = SearchVanityBaseInput & ({
-  initcode?: Hex
+type SearchVanityInput = SearchVanityBaseInput & ({
+  initcode: Hex
+  initcodeHash?: never
 } | {
-  initcodeHash?: Hex
+  initcode?: never
+  initcodeHash: Hash
 })
 
-export interface SearchVanityResult {
-  salt: Hex
-  address: Address
-  guardedSalt?: Hex
+interface SearchVanityStats {
+  attempts: number
+  timeMs: number
+  attemptsPerSec: number
 }
 
-function searchVanity(input: SearchVanityInput): SearchVanityResult {
-  const { deployer: from, initcodeHash: bytecodeHash, msgSender, pattern, saltPrefixBytes, chainId } = SearchVanityArgsSchema.parse(input)
+type ProgressCallback = (stats: SearchVanityStats) => boolean | void
+
+interface SearchVanityOptions {
+  onProgress?: ProgressCallback
+  progressInterval?: number
+}
+
+interface SearchVanityResult {
+  salt: Hex
+  address: Address
+  guardedSalt?: Hex | undefined
+}
+
+interface SearchVanityIteratorInput {
+  from: Hex
+  bytecodeHash: Hash
+  crosschain: boolean
+  permissioned: boolean
+  chainId?: number | undefined
+  saltPrefixBytes: ByteArray
+}
+
+interface SearchVanityAttempt {
+  salt: Hex
+  guardedSalt?: Hex | undefined
+  address: Address
+  attempts: number
+  timeMs: number
+}
+
+function* searchVanityIterator(input: SearchVanityIteratorInput): Generator<SearchVanityAttempt> {
+  const { from, bytecodeHash, crosschain, permissioned, chainId, saltPrefixBytes } = input
 
   const saltBytes = new Uint8Array(32)
   saltBytes.set(saltPrefixBytes)
   const prefilledLength = saltPrefixBytes.length
 
   const isCreateX = from === CREATEX_FACTORY_ADDRESS
+  let attempts = 0
+  const startTime = performance.now()
 
   while (true) {
+    attempts++
     crypto.getRandomValues(saltBytes.subarray(prefilledLength))
     const rawSalt = bytesToHex(saltBytes)
     const salt = isCreateX
       ? computeGuardedSalt({
           salt: rawSalt,
-          msgSender,
-          crosschain: !!input.createxOpts?.crosschain,
-          permissioned: !!input.createxOpts?.permissioned,
+          crosschain,
+          permissioned,
           chainId,
         })
       : rawSalt
@@ -55,22 +89,52 @@ function searchVanity(input: SearchVanityInput): SearchVanityResult {
       bytecodeHash,
       from,
     })
-    if (isMatch(address, pattern)) {
-      if (isCreateX) {
-        return {
-          salt: rawSalt,
-          guardedSalt: salt,
-          address,
-        }
-      }
-      return {
-        salt,
-        address,
-      }
+
+    yield {
+      salt: isCreateX ? rawSalt : salt,
+      guardedSalt: isCreateX ? salt : undefined,
+      address,
+      attempts,
+      timeMs: performance.now() - startTime,
     }
   }
 }
 
-export {
-  searchVanity,
+function searchVanity(input: SearchVanityInput, options?: SearchVanityOptions): SearchVanityResult | null {
+  const { deployer: from, initcodeHash: bytecodeHash, pattern, saltPrefixBytes, permissioned, crosschain, chainId }
+    = SearchVanityArgsSchema.parse(input)
+
+  const { onProgress, progressInterval = 1000 } = options ?? {}
+
+  for (const attempt of searchVanityIterator({ from, bytecodeHash, crosschain, permissioned, chainId, saltPrefixBytes })) {
+    if (onProgress && attempt.attempts % progressInterval === 0) {
+      const shouldContinue = onProgress({
+        attempts: attempt.attempts,
+        timeMs: attempt.timeMs,
+        attemptsPerSec: (attempt.attempts / attempt.timeMs) * 1000,
+      })
+      if (shouldContinue === false) {
+        return null
+      }
+    }
+
+    if (mm.isMatch(attempt.address, pattern)) {
+      if (onProgress) {
+        onProgress({
+          attempts: attempt.attempts,
+          timeMs: attempt.timeMs,
+          attemptsPerSec: (attempt.attempts / attempt.timeMs) * 1000,
+        })
+      }
+      return {
+        salt: attempt.salt,
+        guardedSalt: attempt.guardedSalt,
+        address: attempt.address,
+      }
+    }
+  }
+  return null // unreachable
 }
+
+export { searchVanity }
+export type { SearchVanityAttempt, SearchVanityInput, SearchVanityIteratorInput, SearchVanityOptions, SearchVanityResult }

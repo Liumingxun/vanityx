@@ -21,7 +21,6 @@ const SaltSchema = SaltBytesSchema.transform(v => ({
 
 const ComputeGuardedSaltTransformedBaseArgsSchema = z.object({
   salt: SaltHexSchema,
-  msgSender: AddressSchema,
   permissioned: z.boolean(),
 })
 const ComputeGuardedSaltTransformedArgsSchema = z.discriminatedUnion(
@@ -83,7 +82,6 @@ const ComputeGuardedSaltArgsSchema = z.object({
 
   return {
     salt: bytesToHex(raw),
-    msgSender,
     chainId: crosschain ? chainId : undefined,
     permissioned,
     crosschain,
