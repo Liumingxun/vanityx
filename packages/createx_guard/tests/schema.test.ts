@@ -1,5 +1,5 @@
 import type { Address, Hex } from 'viem'
-import { ComputeGuardedSaltArgsSchema, SaltSchema } from '#schema'
+import { GetGuardedSaltArgsSchema, SaltSchema } from '#schema'
 import { ethAddress as ANY_ADDRESS, hexToBytes, zeroAddress as ZERO_ADDRESS } from 'viem'
 import { describe, expect, it } from 'vitest'
 
@@ -29,14 +29,14 @@ describe('salt schema', () => {
       const hexSalt: Hex = `0x${'01'.repeat(20)}02${'00'.repeat(11)}`
       const { success: successHex, data: dataHex } = SaltSchema.safeParse(hexSalt)
       expect(successHex).toBe(true)
-      expect(dataHex?.senderBytes).toEqual(new Uint8Array(20).fill(1))
-      expect(dataHex?.redeployFlagByte).toBe(2)
+      expect(dataHex?.senderHex).toMatchInlineSnapshot('"0x0101010101010101010101010101010101010101"')
+      expect(dataHex?.redeployFlag).toBe(2)
 
       const byteArraySalt = hexToBytes(hexSalt)
       const { success: successBytes, data: dataBytes } = SaltSchema.safeParse(byteArraySalt)
       expect(successBytes).toBe(true)
-      expect(dataBytes?.senderBytes).toEqual(new Uint8Array(20).fill(1))
-      expect(dataBytes?.redeployFlagByte).toBe(2)
+      expect(dataBytes?.senderHex).toMatchInlineSnapshot('"0x0101010101010101010101010101010101010101"')
+      expect(dataBytes?.redeployFlag).toBe(2)
     })
   })
 })
@@ -82,7 +82,7 @@ describe('compute guard salt schema', () => {
     { salt: ANY_XC_NA_SALT, msgSender: SELF_ADDRESS, chainId: 1 },
     { salt: ANY_XC_NA_SALT, msgSender: SELF_ADDRESS },
   ])('%$: validates correct combinations of salt, msgSender and chainId', (input) => {
-    const { success, error } = ComputeGuardedSaltArgsSchema.safeParse(input)
+    const { success, error } = GetGuardedSaltArgsSchema.safeParse(input)
 
     expect(success).toBe(true)
     expect(error).toBeUndefined()
@@ -96,7 +96,7 @@ describe('compute guard salt schema', () => {
     { salt: ZERO_XC_NA_SALT, msgSender: SELF_ADDRESS, chainId: 1 },
     { salt: ZERO_XC_NA_SALT, msgSender: SELF_ADDRESS },
   ])('%$: rejects invalid combinations of salt, msgSender and chainId', (input) => {
-    const { success, error } = ComputeGuardedSaltArgsSchema.safeParse(input)
+    const { success, error } = GetGuardedSaltArgsSchema.safeParse(input)
     expect(success).toBe(false)
     expect(error?.issues.map(issue => issue.message)).toMatchInlineSnapshot(`
       [
@@ -110,7 +110,7 @@ describe('compute guard salt schema', () => {
     { salt: ANY_XC_NA_SALT, msgSender: ZERO_ADDRESS, chainId: 1 },
     { salt: ANY_XC_NA_SALT, msgSender: ZERO_ADDRESS },
   ])('%$: rejects zero address as msgSender', (input) => {
-    const { success, error } = ComputeGuardedSaltArgsSchema.safeParse(input)
+    const { success, error } = GetGuardedSaltArgsSchema.safeParse(input)
     expect(success).toBe(false)
     expect(error?.issues.map(issue => issue.message)).toMatchInlineSnapshot(`
       [
@@ -124,7 +124,7 @@ describe('compute guard salt schema', () => {
     { salt: SELF_XC_ON_SALT, msgSender: SELF_ADDRESS },
     { salt: ZERO_XC_ON_SALT, msgSender: SELF_ADDRESS },
   ])('%$: rejects enable xchain protection without chainId', (input) => {
-    const { success, error } = ComputeGuardedSaltArgsSchema.safeParse(input)
+    const { success, error } = GetGuardedSaltArgsSchema.safeParse(input)
     expect(success).toBe(false)
     expect(error?.issues.map(issue => issue.message)).toMatchInlineSnapshot(`
       [

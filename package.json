@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "packageManager": "pnpm@10.28.0",
   "description": "Generate vanity Ethereum addresses using CREATE2.",
-  "author": "",
+  "author": "lime <liumingxun@yeah.net>",
   "license": "ISC",
   "keywords": [
     "vanity",
@@ -13,29 +13,36 @@
     "create2",
     "createx"
   ],
-  "main": "src/index.ts",
-  "bin": "dist/index.cjs",
+  "imports": {
+    "#schema": "./src/schema.ts",
+    "#search": "./src/search.ts"
+  },
+  "bin": {
+    "vanityx": "./dist/index.mjs"
+  },
   "files": [
     "dist",
     "src"
   ],
   "scripts": {
-    "test": "pnpx tsx ./bin/index.ts",
-    "build": "node ./scripts/build.bin.ts",
+    "bench": "bun run --sequential bench/*.bench.ts",
+    "build": "tsdown",
     "prepublish": "pnpm run build"
-  },
-  "dependencies": {
-    "viem": "catalog:"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:",
+    "@types/micromatch": "catalog:",
     "@types/node": "catalog:",
     "commander": "catalog:",
     "createx_guard": "workspace:*",
-    "esbuild": "catalog:",
     "eslint": "catalog:",
     "eslint-plugin-format": "catalog:",
-    "typescript": "catalog:"
+    "micromatch": "catalog:",
+    "mitata": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "viem": "catalog:",
+    "zod": "catalog:"
   },
   "workspaces": [
     "packages/*"

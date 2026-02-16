@@ -3,7 +3,7 @@
 import type { Address, Hex } from 'viem'
 import process from 'node:process'
 import { Command } from 'commander'
-import { getVanity } from '../src/index'
+import { searchVanity } from '@/search.ts'
 
 const program = new Command()
 
@@ -16,34 +16,25 @@ program
   .command('generate')
   .description('Generate a vanity address')
   .requiredOption('-i, --init-code-hash <hash>', 'Init code hash')
-  .requiredOption('-m, --matching <regexp>', 'Regular expression to match address (e.g., ^0xdead or dead.*beef)')
-  .option('-s, --sender <address>', 'Message sender address')
+  .requiredOption('-p, --pattern <glob>', 'Glob pattern to match address (e.g., 0xcafe*A0{A0,B0} or 0xdead*beef)')
+  .requiredOption('-s, --sender <address>', 'Message sender address')
+  .option('-c, --chain-id <integer>', 'Chain ID for target address computation (e.g., 1 for Ethereum Mainnet)')
   .option('-d, --deployer <address>', 'Deployer address (CREATE2 factory, default: createx)', '0xba5ed099633d3b313e4d5f7bdc1305d3c28ba5ed')
-  .option('-c, --case-sensitive', 'Enable case-sensitive matching (default: case-insensitive)', false)
   .action((options) => {
-    const { deployer, sender, initCodeHash, matching, caseSensitive } = options
+    const { deployer, sender, initCodeHash, pattern, chainId } = options
 
-    let regex: RegExp
-    try {
-      regex = new RegExp(matching, caseSensitive ? '' : 'i')
-    }
-    catch {
-      process.stderr.write(`Invalid regular expression: ${matching}\n`)
-      process.exit(1)
-    }
-
-    const result = getVanity({
+    const result = searchVanity({
       deployer: deployer as Address,
       msgSender: sender as Address,
-      initCodeHash: initCodeHash as Hex,
-      matching: address => regex.test(address),
+      initcodeHash: initCodeHash as Hex,
+      pattern: pattern as Hex,
+      chainId: chainId ? Number(chainId) : undefined,
     })
 
     process.stdout.write('Result:\n')
-    process.stdout.write(`Address: ${result.address}\n`)
     process.stdout.write(`Salt: ${result.salt}\n`)
-    process.stdout.write(`Attempts: ${result.counter}\n`)
-    process.stdout.write(`Time taken (ms): ${result.timeMs.toFixed(2)}\n`)
+    process.stdout.write(`Attempts: ${result.guardedSalt}\n`)
+    process.stdout.write(`Address: ${result.address}\n`)
   })
 
 program.parse()

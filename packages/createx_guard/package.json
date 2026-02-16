@@ -13,13 +13,14 @@
     "create2"
   ],
   "imports": {
-    "#schema": "./src/schema.ts"
+    "#schema": "./src/schema.ts",
+    "#compute": "./src/compute.ts"
   },
   "exports": {
-    ".": "./mod.ts"
+    ".": "./mod.ts",
+    "./schema": "./src/schema.ts"
   },
   "main": "mod.ts",
-  "types": "./types",
   "files": [
     "./src"
   ],
