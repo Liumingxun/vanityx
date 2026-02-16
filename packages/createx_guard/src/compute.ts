@@ -1,5 +1,5 @@
 import type { Address, ByteArray, Hex } from 'viem'
-import { ComputeGuardedSaltArgsSchema } from '#schema'
+import { GetGuardedSaltArgsSchema } from '#schema'
 import { encodeAbiParameters, keccak256, numberToHex } from 'viem'
 
 interface GetGuardedSaltInput {
@@ -23,7 +23,7 @@ interface GetGuardedSaltInput {
  * ```
  */
 function getGuardedSalt(input: GetGuardedSaltInput): Hex {
-  const { salt, chainId, permissioned, crosschain } = ComputeGuardedSaltArgsSchema.parse(input)
+  const { salt, chainId, permissioned, crosschain } = GetGuardedSaltArgsSchema.parse(input)
   return computeGuardedSalt({ salt, chainId, permissioned, crosschain })
 }
 

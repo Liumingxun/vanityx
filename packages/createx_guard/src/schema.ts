@@ -19,27 +19,27 @@ const SaltSchema = SaltBytesSchema.transform(v => ({
   raw: v,
 }))
 
-const ComputeGuardedSaltTransformedBaseArgsSchema = z.object({
+const GetGuardedSaltTransformedBaseArgsSchema = z.object({
   salt: SaltHexSchema,
   permissioned: z.boolean(),
 })
-const ComputeGuardedSaltTransformedArgsSchema = z.discriminatedUnion(
+const GetGuardedSaltTransformedArgsSchema = z.discriminatedUnion(
   'crosschain',
   [
     z.object({
-      ...ComputeGuardedSaltTransformedBaseArgsSchema.shape,
+      ...GetGuardedSaltTransformedBaseArgsSchema.shape,
       chainId: z.never().optional(),
       crosschain: z.literal(false),
     }),
     z.object({
-      ...ComputeGuardedSaltTransformedBaseArgsSchema.shape,
+      ...GetGuardedSaltTransformedBaseArgsSchema.shape,
       chainId: ChainIdSchema,
       crosschain: z.literal(true),
     }),
   ],
 )
 
-const ComputeGuardedSaltArgsSchema = z.object({
+const GetGuardedSaltArgsSchema = z.object({
   salt: SaltSchema,
   msgSender: AddressSchema.toLowerCase(),
   chainId: ChainIdSchema.optional(),
@@ -86,12 +86,12 @@ const ComputeGuardedSaltArgsSchema = z.object({
     permissioned,
     crosschain,
   }
-}).pipe(z.transform(v => ComputeGuardedSaltTransformedArgsSchema.parse(v)))
+}).pipe(z.transform(v => GetGuardedSaltTransformedArgsSchema.parse(v)))
 
 export {
   AddressSchema,
   ChainIdSchema,
-  ComputeGuardedSaltArgsSchema,
+  GetGuardedSaltArgsSchema,
   SaltBytesSchema,
   SaltHexSchema,
   SaltSchema,

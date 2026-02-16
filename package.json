@@ -14,7 +14,8 @@
     "createx"
   ],
   "imports": {
-    "#schema": "./src/schema.ts"
+    "#schema": "./src/schema.ts",
+    "#search": "./src/search.ts"
   },
   "bin": {
     "vanityx": "./dist/index.mjs"

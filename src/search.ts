@@ -29,10 +29,8 @@ interface SearchVanityStats {
   attemptsPerSec: number
 }
 
-type ProgressCallback = (stats: SearchVanityStats) => boolean | void
-
 interface SearchVanityOptions {
-  onProgress?: ProgressCallback
+  onProgress?: (stats: SearchVanityStats) => boolean | void
   progressInterval?: number
 }
 
