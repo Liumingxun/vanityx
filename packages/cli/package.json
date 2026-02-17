@@ -1,0 +1,16 @@
+{
+  "name": "@vanityx/cli",
+  "type": "module",
+  "version": "1.0.0",
+  "packageManager": "pnpm@10.28.0",
+  "description": "CLI tool to search vanity Ethereum addresses using CREATE2.",
+  "author": "lime <liumingxun@yeah.net>",
+  "license": "ISC",
+  "bin": {
+    "vanityx": "./bin/index.ts"
+  },
+  "dependencies": {
+    "@cliffy/command": "catalog:",
+    "vanityx": "workspace:*"
+  }
+}
