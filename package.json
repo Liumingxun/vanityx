@@ -29,15 +29,17 @@
     "build": "tsdown",
     "prepublish": "pnpm run build"
   },
+  "dependencies": {
+    "bun": "catalog:"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:",
-    "@types/micromatch": "catalog:",
+    "@types/bun": "catalog:",
     "@types/node": "catalog:",
     "commander": "catalog:",
     "createx_guard": "workspace:*",
     "eslint": "catalog:",
     "eslint-plugin-format": "catalog:",
-    "micromatch": "catalog:",
     "mitata": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",

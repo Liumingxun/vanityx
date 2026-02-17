@@ -1,7 +1,7 @@
 import type { Address, ByteArray, Hash, Hex } from 'viem'
 import { CREATEX_FACTORY_ADDRESS, SearchVanityArgsSchema } from '#schema'
+import { Glob } from 'bun'
 import { computeGuardedSalt } from 'createx_guard'
-import mm from 'micromatch'
 import { bytesToHex, getContractAddress } from 'viem'
 
 interface SearchVanityBaseInput {
@@ -101,6 +101,7 @@ function* searchVanityIterator(input: SearchVanityIteratorInput): Generator<Sear
 function searchVanity(input: SearchVanityInput, options?: SearchVanityOptions): SearchVanityResult | null {
   const { deployer: from, initcodeHash: bytecodeHash, pattern, saltPrefixBytes, permissioned, crosschain, chainId }
     = SearchVanityArgsSchema.parse(input)
+  const glob = new Glob(pattern)
 
   const { onProgress, progressInterval = 1000 } = options ?? {}
 
@@ -116,7 +117,7 @@ function searchVanity(input: SearchVanityInput, options?: SearchVanityOptions): 
       }
     }
 
-    if (mm.isMatch(attempt.address, pattern)) {
+    if (glob.match(attempt.address)) {
       if (onProgress) {
         onProgress({
           attempts: attempt.attempts,
