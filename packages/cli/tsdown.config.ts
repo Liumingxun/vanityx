@@ -2,5 +2,5 @@ import { defineConfig } from 'tsdown'
 
 export default defineConfig({
   entry: ['./bin/index.ts'],
-  inlineOnly: false,
+  banner: '#!/usr/bin/env node\n',
 })

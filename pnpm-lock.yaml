@@ -10,8 +10,8 @@ catalogs:
       specifier: ^7.0.0
       version: 7.0.0
     '@cliffy/command':
-      specifier: jsr:1.0.0-rc.8
-      version: 1.0.0-rc.8
+      specifier: jsr:1.0.0
+      version: 1.0.0
     '@nomicfoundation/hardhat-ignition':
       specifier: ^3.0.7
       version: 3.0.7
@@ -93,9 +93,6 @@ importers:
       mitata:
         specifier: 'catalog:'
         version: 1.0.34
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.20.3(synckit@0.11.12)(typescript@5.8.3)
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
@@ -110,10 +107,14 @@ importers:
     dependencies:
       '@cliffy/command':
         specifier: 'catalog:'
-        version: '@jsr/cliffy__command@1.0.0-rc.8'
+        version: '@jsr/cliffy__command@1.0.0'
       vanityx:
         specifier: workspace:*
         version: link:../..
+    devDependencies:
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.20.3(synckit@0.11.12)(typescript@5.8.3)
 
   packages/createx_guard:
     dependencies:
@@ -641,23 +642,26 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@jsr/cliffy__command@1.0.0-rc.8':
-    resolution: {integrity: sha512-ayYncuw/PTIiceKKMEZPyv9Qu39Pt6bNTBariKjZi0th5Je4am6RNC+FSXEAHPJBH+bAY3S0lwaFsEGC9uPEmg==, tarball: https://npm.jsr.io/~/11/@jsr/cliffy__command/1.0.0-rc.8.tgz}
+  '@jsr/cliffy__command@1.0.0':
+    resolution: {integrity: sha512-oObplVtu1tvpkhgpuPDHZidx9g3axVOfRMQGmw7ZSGxp0+vZIJGiEtpcSvlN0XfuEhOG8neqfVBSSE9txrKanw==, tarball: https://npm.jsr.io/~/11/@jsr/cliffy__command/1.0.0.tgz}
 
-  '@jsr/cliffy__flags@1.0.0-rc.8':
-    resolution: {integrity: sha512-gbIPx2XIxkNlAQikraWm4h+C77tHmE8NQhwIX6Qn2rrU32uh/Vg4OXklXvlrkfrcs3wMbOd/SZ9e/wVqM0H8/w==, tarball: https://npm.jsr.io/~/11/@jsr/cliffy__flags/1.0.0-rc.8.tgz}
+  '@jsr/cliffy__flags@1.0.0':
+    resolution: {integrity: sha512-j/v3J8MWu0tkYyisZ2w1HxELxxL/qg6vey9+fRkbTJ+S9J0GeLUn2joouikG7aXpULKCXHTjJ9XH9gQx+F3npw==, tarball: https://npm.jsr.io/~/11/@jsr/cliffy__flags/1.0.0.tgz}
 
-  '@jsr/cliffy__internal@1.0.0-rc.8':
-    resolution: {integrity: sha512-xKIMr2v5+R5qNw7CWqic2ulhZE3cXPKB40rb5mibsUrtJkC55Ha/3PGgTm1W9SWH1+IqA/FfC2ikpjzCXSKVBw==, tarball: https://npm.jsr.io/~/11/@jsr/cliffy__internal/1.0.0-rc.8.tgz}
+  '@jsr/cliffy__internal@1.0.0':
+    resolution: {integrity: sha512-YPkbccbuu+kE55k+nia5jJx5Tu/IolBDXZTAgEA+YRGOzq8I1VkXajwykFXvSbXeVee3zQBU7y0HajVDB7ujQA==, tarball: https://npm.jsr.io/~/11/@jsr/cliffy__internal/1.0.0.tgz}
 
-  '@jsr/cliffy__table@1.0.0-rc.8':
-    resolution: {integrity: sha512-7r94r56TLd17raKyZQHV3/qLngy2Lusuy4rjA/5QMDNM0lDIwZw67lmRMxpyX6+qzAxzRAJ8dtTvFSvGwrSqgg==, tarball: https://npm.jsr.io/~/11/@jsr/cliffy__table/1.0.0-rc.8.tgz}
+  '@jsr/cliffy__table@1.0.0':
+    resolution: {integrity: sha512-VoLxH0DjofHWPWKUc5N+oCwXB6O6e+carnhp23yJTa7qokBb+SCrTIABEgQdIe/p0bxgmZhz17xt2efaAxXvbQ==, tarball: https://npm.jsr.io/~/11/@jsr/cliffy__table/1.0.0.tgz}
 
   '@jsr/std__fmt@1.0.9':
     resolution: {integrity: sha512-YFJJMozmORj2K91c5J9opWeh0VUwrd+Mwb7Pr0FkVCAKVLu2UhT4LyvJqWiyUT+eF+MdfqQ9F7RtQj4bXn9Smw==, tarball: https://npm.jsr.io/~/11/@jsr/std__fmt/1.0.9.tgz}
 
   '@jsr/std__regexp@1.0.1':
     resolution: {integrity: sha512-AnGeP//DHpPvhCWjI5dR4o013JhCQioD8yMF8drD7PWb0X4kvmO35hbZi+NZhfSolz4Ts2cpPzJY+DUpi2XE9A==, tarball: https://npm.jsr.io/~/11/@jsr/std__regexp/1.0.1.tgz}
+
+  '@jsr/std__semver@1.0.8':
+    resolution: {integrity: sha512-YhkykPU2Majz66e+rQbP0okYc7kKv+U32aguLPCXZZAL+vEVmBA+khHjPHhLBpWR073gzU3WHqGRgB7a/aXCjg==, tarball: https://npm.jsr.io/~/11/@jsr/std__semver/1.0.8.tgz}
 
   '@jsr/std__text@1.0.17':
     resolution: {integrity: sha512-oZsihl1bcTy1Ixzven8rin8kjChj1zDJWqgpS0oSMGCJDzyB365gtIfAvcMmji+M+FcIWo3goDXfHcFYt+k/kg==, tarball: https://npm.jsr.io/~/11/@jsr/std__text/1.0.17.tgz}
@@ -3389,29 +3393,33 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@jsr/cliffy__command@1.0.0-rc.8':
+  '@jsr/cliffy__command@1.0.0':
     dependencies:
-      '@jsr/cliffy__flags': 1.0.0-rc.8
-      '@jsr/cliffy__internal': 1.0.0-rc.8
-      '@jsr/cliffy__table': 1.0.0-rc.8
+      '@jsr/cliffy__flags': 1.0.0
+      '@jsr/cliffy__internal': 1.0.0
+      '@jsr/cliffy__table': 1.0.0
       '@jsr/std__fmt': 1.0.9
+      '@jsr/std__semver': 1.0.8
       '@jsr/std__text': 1.0.17
 
-  '@jsr/cliffy__flags@1.0.0-rc.8':
+  '@jsr/cliffy__flags@1.0.0':
     dependencies:
+      '@jsr/cliffy__internal': 1.0.0
       '@jsr/std__text': 1.0.17
 
-  '@jsr/cliffy__internal@1.0.0-rc.8':
+  '@jsr/cliffy__internal@1.0.0':
     dependencies:
       '@jsr/std__fmt': 1.0.9
 
-  '@jsr/cliffy__table@1.0.0-rc.8':
+  '@jsr/cliffy__table@1.0.0':
     dependencies:
       '@jsr/std__fmt': 1.0.9
 
   '@jsr/std__fmt@1.0.9': {}
 
   '@jsr/std__regexp@1.0.1': {}
+
+  '@jsr/std__semver@1.0.8': {}
 
   '@jsr/std__text@1.0.17':
     dependencies:

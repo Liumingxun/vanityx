@@ -3,14 +3,30 @@
   "type": "module",
   "version": "1.0.0",
   "packageManager": "pnpm@10.28.0",
-  "description": "CLI tool to search vanity Ethereum addresses using CREATE2.",
+  "description": "A command-line tool for searching Ethereum CREATE2 vanity addresses.",
   "author": "lime <liumingxun@yeah.net>",
   "license": "ISC",
+  "keywords": [
+    "vanity",
+    "address",
+    "ethereum",
+    "create2",
+    "createx"
+  ],
   "bin": {
-    "vanityx": "./bin/index.ts"
+    "vanityx": "./bin/index.ts",
+    "nvanityx": "./dist/index.mjs"
+  },
+  "scripts": {
+    "prebuild": "sed -i '1{/^#!/d;}' bin/index.ts",
+    "build": "tsdown",
+    "postbuild": "sed -i '1i\\#!/usr/bin/env bun' bin/index.ts"
   },
   "dependencies": {
     "@cliffy/command": "catalog:",
     "vanityx": "workspace:*"
+  },
+  "devDependencies": {
+    "tsdown": "catalog:"
   }
 }
