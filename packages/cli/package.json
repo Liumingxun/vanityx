@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@cliffy/command": "catalog:",
+    "bun": "catalog:",
     "vanityx": "workspace:*"
   },
   "devDependencies": {
