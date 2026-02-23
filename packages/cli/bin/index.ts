@@ -5,6 +5,7 @@ import { Command } from '@cliffy/command'
 import { CompletionsCommand } from '@cliffy/command/completions'
 import { inspect } from 'bun'
 import pkg from '../package.json' with { type: 'json' }
+import { searchWithWorkers } from '../src/index.ts'
 
 const program = new Command()
 
@@ -38,74 +39,35 @@ program
   .action(async ({ initcodeHash, pattern, sender: msgSender, deployer, chainId, crosschain, permissioned, threads }) => {
     writeOut(`Searching with ${threads} workers...`)
 
-    return new Promise<void>((resolve, reject) => {
-      const workers: Worker[] = []
-      const workerStats = new Map<number, { attempts: number, timeMs: number }>()
-      let found = false
+    const startTime = performance.now()
 
-      const getAggregateStats = () => {
-        let totalAttempts = 0
-        let maxTime = 0
+    process.on('SIGINT', () => {
+      writeOut('\n\nStopping...\n')
+      process.exit(0)
+    })
 
-        for (const stat of workerStats.values()) {
-          totalAttempts += stat.attempts
-          maxTime = Math.max(maxTime, stat.timeMs)
-        }
-
-        const attemptsPerSec = maxTime > 0 ? (totalAttempts / maxTime) * 1000 : 0
-        return { totalAttempts, maxTime, attemptsPerSec }
-      }
-
-      const cleanup = () => {
-        for (const w of workers) {
-          w.terminate()
-        }
-      }
-
-      const handleWorkerError = (workerId: number, label: string, err: unknown) => {
-        writeErr(`[Main] Worker ${workerId} ${label}: ${inspect(err)}`)
-        cleanup()
-        reject(new Error('Worker failure'))
-      }
-
-      process.on('SIGINT', () => {
-        writeOut('\n\nStopping...\n')
-        cleanup()
-        process.exit(0)
+    try {
+      const result = await searchWithWorkers({
+        initcodeHash: initcodeHash as `0x${string}`,
+        pattern: pattern as `0x${string}`,
+        msgSender: msgSender as `0x${string}`,
+        deployer: deployer as `0x${string}`,
+        chainId: typeof chainId === 'number' ? chainId : undefined,
+        createxOpts: { crosschain, permissioned },
+      }, {
+        threads: Number(threads),
+        onProgress: (stats) => {
+          writeProgress(`Attempts: ${stats.totalAttempts} | Speed: ${Math.floor(stats.attemptsPerSec)}/s`)
+        },
       })
 
-      for (let i = 0; i < Number(threads); i++) {
-        const workerId = i
-        const worker = new Worker(
-          new URL('../src/worker.ts', import.meta.url),
-          { type: 'module' },
-        )
-        worker.addEventListener('error', err => handleWorkerError(workerId, 'ERROR', err))
-        worker.addEventListener('messageerror', err => handleWorkerError(workerId, 'MESSAGE ERROR', err))
-
-        worker.addEventListener('message', (ev: MessageEvent) => {
-          const { type, data } = ev.data
-
-          if (type === 'progress') {
-            workerStats.set(workerId, { attempts: data.attempts, timeMs: data.timeMs })
-            const { totalAttempts, attemptsPerSec } = getAggregateStats()
-            writeProgress(`Attempts: ${totalAttempts} | Speed: ${Math.floor(attemptsPerSec)}/s`)
-          }
-          else if (type === 'result' && !found) {
-            found = true
-            cleanup()
-            const { maxTime } = getAggregateStats()
-
-            writeOut(` | Time: ${(maxTime / 1000).toFixed(2)}s\n${inspect.table(data, { colors: true })}`)
-
-            resolve()
-          }
-        })
-
-        worker.postMessage({ type: 'search', data: { initcodeHash, pattern, msgSender, deployer, chainId, createxOpts: { crosschain, permissioned } } })
-        workers.push(worker)
-      }
-    })
+      const timeMs = performance.now() - startTime
+      writeOut(` | Time: ${(timeMs / 1000).toFixed(2)}s\n${inspect.table(result)}`)
+    }
+    catch (error) {
+      writeErr(`\nSearch failed: ${(error as Error).message}`)
+      process.exit(1)
+    }
   })
 
 program
