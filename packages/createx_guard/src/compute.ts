@@ -1,6 +1,6 @@
 import type { Address, ByteArray, Hex } from 'viem'
 import { GetGuardedSaltArgsSchema } from '#schema'
-import { encodeAbiParameters, keccak256, numberToHex } from 'viem'
+import { bytesToHex, encodeAbiParameters, keccak256, numberToHex } from 'viem'
 
 interface GetGuardedSaltInput {
   salt: Hex | ByteArray
@@ -24,7 +24,7 @@ interface GetGuardedSaltInput {
  */
 function getGuardedSalt(input: GetGuardedSaltInput): Hex {
   const { salt, chainId, permissioned, crosschain } = GetGuardedSaltArgsSchema.parse(input)
-  return computeGuardedSalt({ salt, chainId, permissioned, crosschain })
+  return bytesToHex(computeGuardedSalt({ salt, chainId, permissioned, crosschain }))
 }
 
 interface ComputeGuardedSaltInput {
@@ -40,7 +40,7 @@ interface ComputeGuardedSaltInput {
  *
  * Note: When using this function, ensure that the input parameters are correctly set according to the CreateX contract's requirements, as this function **does not perform any validation** on the inputs.
  * @param {ComputeGuardedSaltInput} input The input object containing the salt, permissioned, crosschain, and optionally chainId for computing the guarded salt.
- * @returns {Hex} The computed guarded salt as a hexadecimal string.
+ * @returns {ByteArray} The computed guarded salt as a byte array.
  * @example
  * ```ts
  * const exampleInput: ComputeGuardedSaltInput = {
@@ -52,7 +52,7 @@ interface ComputeGuardedSaltInput {
  * computeGuardedSalt(exampleInput)
  * ```
  */
-function computeGuardedSalt({ salt, chainId, permissioned, crosschain }: ComputeGuardedSaltInput): Hex {
+function computeGuardedSalt({ salt, chainId, permissioned, crosschain }: ComputeGuardedSaltInput): ByteArray {
   // https://github.com/Liumingxun/vanity2/blob/f75ad02613713e544aec70f2b47220ce96e8f87e/packages/createx_guard/schema.ts#L64-L79
   if (permissioned && crosschain) {
     const msgSender = salt.slice(0, 42) as Address
@@ -60,7 +60,7 @@ function computeGuardedSalt({ salt, chainId, permissioned, crosschain }: Compute
     return keccak256(encodeAbiParameters(
       [{ type: 'address' }, { type: 'uint256' }, { type: 'bytes32' }],
       [msgSender, BigInt(chainId!), salt],
-    ))
+    ), 'bytes')
   }
   else if (permissioned) {
     const msgSender = salt.slice(0, 42) as Address
@@ -68,18 +68,18 @@ function computeGuardedSalt({ salt, chainId, permissioned, crosschain }: Compute
     return keccak256(encodeAbiParameters(
       [{ type: 'address' }, { type: 'bytes32' }],
       [msgSender, salt],
-    ))
+    ), 'bytes')
   }
   else if (crosschain) {
     // https://github.com/pcaversaccio/createx/blob/73d517ef6639a052ce02da245a9d3ccfc185ba6b/src/CreateX.sol#L898-L901
     return keccak256(encodeAbiParameters(
       [{ type: 'bytes32' }, { type: 'bytes32' }],
       [numberToHex((chainId!), { size: 32 }), salt],
-    ))
+    ), 'bytes')
   }
 
   // https://github.com/pcaversaccio/createx/blob/73d517ef6639a052ce02da245a9d3ccfc185ba6b/src/CreateX.sol#L907-L910
-  return keccak256(encodeAbiParameters([{ type: 'bytes32' }], [salt]))
+  return keccak256(encodeAbiParameters([{ type: 'bytes32' }], [salt]), 'bytes')
 }
 
 export { computeGuardedSalt, getGuardedSalt }
