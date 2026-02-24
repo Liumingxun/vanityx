@@ -22,6 +22,9 @@
   "files": [
     "src"
   ],
+  "scripts": {
+    "build": "bun build --compile --bytecode --minify bin/index.ts src/worker.ts --outfile=dist/vanityx"
+  },
   "dependencies": {
     "@cliffy/command": "catalog:",
     "vanityx": "workspace:*"

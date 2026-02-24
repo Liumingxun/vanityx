@@ -74,8 +74,7 @@ program
   .command('completions', new CompletionsCommand())
   .alias('com')
 
-await program
-  .parse()
+program.parse()
 
 function writeOut(message: string): void {
   process.stdout.write(`${message}\n`)

@@ -54,10 +54,7 @@ export async function searchWithWorkers(
 
     for (let i = 0; i < threads; i++) {
       const workerId = i
-      const worker = new Worker(
-        new URL('./worker.ts', import.meta.url),
-        { type: 'module' },
-      )
+      const worker = new Worker('./src/worker.ts')
 
       worker.addEventListener('error', err => handleError(workerId, err))
       worker.addEventListener('messageerror', err => handleError(workerId, err))
