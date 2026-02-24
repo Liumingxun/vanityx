@@ -1,11 +1,11 @@
 #!/usr/bin/env bun
 
 import process from 'node:process'
+import { searchWithWorkers } from '#main'
 import { Command } from '@cliffy/command'
 import { CompletionsCommand } from '@cliffy/command/completions'
 import { inspect } from 'bun'
 import pkg from '../package.json' with { type: 'json' }
-import { searchWithWorkers } from '../src/index.ts'
 
 const program: Command = new Command()
 
@@ -17,7 +17,7 @@ const patternExample = {
 
 program
   .name('vanityx')
-  .description('Search vanity addresses using CREATE2')
+  .description('Search vanity addresses for Ethereum CREATE2 using multiple threads')
   .version(pkg.version)
   .usage('search [options]')
   .action(() => {

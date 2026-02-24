@@ -13,6 +13,9 @@
     "create2",
     "createx"
   ],
+  "imports": {
+    "#main": "./src/index.ts"
+  },
   "bin": {
     "vanityx": "./bin/index.ts"
   },

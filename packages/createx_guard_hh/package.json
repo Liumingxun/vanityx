@@ -18,7 +18,6 @@
   "devDependencies": {
     "@nomicfoundation/hardhat-ignition": "catalog:",
     "@nomicfoundation/hardhat-toolbox-viem": "catalog:",
-    "@types/node": "catalog:",
     "@vitest/ui": "catalog:",
     "createx_guard": "workspace:*",
     "forge-std": "catalog:",
