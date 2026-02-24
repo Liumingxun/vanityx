@@ -49,8 +49,8 @@ interface SearchVanityIteratorInput {
 }
 
 interface SearchVanityAttempt {
-  salt: Hex
-  guardedSalt?: Hex | undefined
+  salt: ByteArray | Hex
+  guardedSalt?: ByteArray | undefined
   address: Address
 }
 
@@ -63,9 +63,9 @@ function* createXIterator(input: SearchVanityIteratorInput): Generator<SearchVan
 
   while (true) {
     crypto.getRandomValues(saltBytes.subarray(prefilledLength))
-    const rawSalt = bytesToHex(saltBytes)
+    const salt = bytesToHex(saltBytes)
     const guardedSalt = computeGuardedSalt({
-      salt: rawSalt,
+      salt,
       crosschain,
       permissioned,
       chainId,
@@ -79,7 +79,7 @@ function* createXIterator(input: SearchVanityIteratorInput): Generator<SearchVan
     })
 
     yield {
-      salt: rawSalt,
+      salt,
       guardedSalt,
       address,
     }
@@ -87,15 +87,12 @@ function* createXIterator(input: SearchVanityIteratorInput): Generator<SearchVan
 }
 
 function* standardIterator(input: SearchVanityIteratorInput): Generator<SearchVanityAttempt> {
-  const { from, bytecodeHash, saltPrefixBytes } = input
+  const { from, bytecodeHash } = input
 
-  const saltBytes = new Uint8Array(32)
-  saltBytes.set(saltPrefixBytes)
-  const prefilledLength = saltPrefixBytes.length
+  const salt = new Uint8Array(32)
 
   while (true) {
-    crypto.getRandomValues(saltBytes.subarray(prefilledLength))
-    const salt = bytesToHex(saltBytes)
+    crypto.getRandomValues(salt)
 
     const address = getContractAddress({
       opcode: 'CREATE2',
@@ -148,8 +145,8 @@ function searchVanity(input: SearchVanityInput, options?: SearchVanityOptions): 
         })
       }
       return {
-        salt: attempt.salt,
-        guardedSalt: attempt.guardedSalt,
+        salt: typeof attempt.salt === 'string' ? attempt.salt : bytesToHex(attempt.salt),
+        guardedSalt: attempt.guardedSalt ? bytesToHex(attempt.guardedSalt) : undefined,
         address: attempt.address,
       }
     }
