@@ -7,7 +7,7 @@ import { inspect } from 'bun'
 import pkg from '../package.json' with { type: 'json' }
 import { searchWithWorkers } from '../src/index.ts'
 
-const program = new Command()
+const program: Command = new Command()
 
 const patternExample = {
   '--pattern "0xcafe*"': 'Search for addresses starting with "0xcafe"',
@@ -77,14 +77,14 @@ program
 await program
   .parse()
 
-function writeOut(message: string) {
+function writeOut(message: string): void {
   process.stdout.write(`${message}\n`)
 }
 
-function writeProgress(message: string) {
+function writeProgress(message: string): void {
   process.stdout.write(`\r\x1B[K${message}`)
 }
 
-function writeErr(message: string) {
+function writeErr(message: string): void {
   process.stderr.write(`${message}\n`)
 }

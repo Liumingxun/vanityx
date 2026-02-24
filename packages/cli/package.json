@@ -14,20 +14,13 @@
     "createx"
   ],
   "bin": {
-    "vanityx": "./bin/index.ts",
-    "nvanityx": "./dist/index.mjs"
+    "vanityx": "./bin/index.ts"
   },
-  "scripts": {
-    "prebuild": "sed -i '1{/^#!/d;}' bin/index.ts",
-    "build": "tsdown",
-    "postbuild": "sed -i '1i\\#!/usr/bin/env bun' bin/index.ts"
-  },
+  "files": [
+    "src"
+  ],
   "dependencies": {
     "@cliffy/command": "catalog:",
-    "bun": "catalog:",
     "vanityx": "workspace:*"
-  },
-  "devDependencies": {
-    "tsdown": "catalog:"
   }
 }

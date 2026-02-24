@@ -26,23 +26,22 @@
     "src"
   ],
   "scripts": {
-    "bench": "bun run --sequential bench/*.bench.ts",
-    "prepublish": "pnpm -F cli run build"
+    "bench": "bun run --sequential bench/*.bench.ts"
   },
   "dependencies": {
-    "bun": "catalog:"
+    "bun": "catalog:",
+    "createx_guard": "workspace:*",
+    "viem": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:",
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
-    "createx_guard": "workspace:*",
     "eslint": "catalog:",
     "eslint-plugin-format": "catalog:",
     "mitata": "catalog:",
-    "typescript": "catalog:",
-    "viem": "catalog:",
-    "zod": "catalog:"
+    "typescript": "catalog:"
   },
   "workspaces": [
     "packages/*"
