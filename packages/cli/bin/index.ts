@@ -2,8 +2,8 @@
 
 import type { CreatexOpts } from 'vanityx'
 import process from 'node:process'
-import { searchWithWorkers } from '#main'
-import { addressType, hashType, patternType } from '#type'
+import { addressType, hashType, patternType } from '#cli.type'
+import { searchWithWorkers } from '#manager'
 import { Command } from '@cliffy/command'
 import { CompletionsCommand } from '@cliffy/command/completions'
 import { inspect } from 'bun'

@@ -28,4 +28,6 @@ summary(() => {
   }).args('concurrency', [1, navigator.hardwareConcurrency])
 })
 
-await run()
+await run({
+  format: 'markdown',
+})

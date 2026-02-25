@@ -14,8 +14,8 @@
     "createx"
   ],
   "imports": {
-    "#main": "./src/index.ts",
-    "#type": "./src/cli.type.ts"
+    "#manager": "./src/index.ts",
+    "#cli.type": "./src/cli.type.ts"
   },
   "bin": {
     "vanityx": "./bin/index.ts"
@@ -30,5 +30,8 @@
   "dependencies": {
     "@cliffy/command": "catalog:",
     "vanityx": "workspace:*"
+  },
+  "devDependencies": {
+    "viem": "catalog:"
   }
 }

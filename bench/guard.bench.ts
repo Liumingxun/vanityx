@@ -20,4 +20,6 @@ summary(() => {
   })
 })
 
-await run()
+await run({
+  format: 'markdown',
+})

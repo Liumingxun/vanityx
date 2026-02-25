@@ -5,7 +5,7 @@ import { ethAddress } from 'viem'
 
 const initcodeHash = '0x56b90c57ea3b6dfd7d0be3027c7508e333196786f9863ba6d87df6416fb8fa89' as const
 
-bench('search', () => {
+bench('iter & match 100_000 times', () => {
   searchVanity({
     deployer: CREATEX_FACTORY_ADDRESS,
     pattern: '0xabcdef*',
