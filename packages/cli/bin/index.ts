@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
 
+import type { CreatexOpts } from 'vanityx'
 import process from 'node:process'
 import { searchWithWorkers } from '#main'
+import { addressType, hashType, patternType } from '#type'
 import { Command } from '@cliffy/command'
 import { CompletionsCommand } from '@cliffy/command/completions'
 import { inspect } from 'bun'
@@ -23,20 +25,24 @@ program
   .action(() => {
     program.showHelp()
   })
-  .example('basic usage', `vanityx search -i "$INITCODE_HASH" -s "$SENDER" -p '0xab*'`)
+  .example('basic usage', `vanityx search -i "$INITCODE_HASH" -p "$PATTERN"`)
+  .example('other deployer', `vanityx search -i "$INITCODE_HASH" -p "$PATTERN" -d "0xYourFactoryAddress"`)
 
 program
   .command('search', 'Search for vanity addresses')
+  .type('hash', hashType)
+  .type('pattern', patternType)
+  .type('address', addressType)
   .example('pattern', `${inspect.table(patternExample)}\nFor more pattern syntax, see: https://bun.sh/docs/runtime/glob`)
-  .option('-i, --initcode-hash <hash>', 'Init code hash', { required: true })
-  .option('-s, --sender <address>', 'Message sender address', { required: true })
-  .option('-p, --pattern <glob>', 'Glob pattern to match address', { required: true })
-  .option('-d, --deployer [address]', 'Deployer address (CREATE2 factory)', { default: '0xba5ed099633d3b313e4d5f7bdc1305d3c28ba5ed', defaultText: 'CREATEX factory' })
-  .option('-c, --chain-id [integer:integer]', 'EVM network chain ID')
+  .option('-i, --initcode-hash <hash:hash>', 'Init code hash', { required: true })
+  .option('-p, --pattern <glob:pattern>', 'Glob pattern to match address', { required: true })
+  .option('-d, --deployer [address:address]', 'Deployer address (CREATE2 factory)', { default: '0xba5ed099633d3b313e4d5f7bdc1305d3c28ba5ed', defaultText: 'CREATEX factory', value: (v) => { return v as `0x${string}` } })
   .option('-x, --crosschain', 'Enable crosschain mode for CREATEX factory', { default: false, depends: ['chain-id'] })
-  .option('-y, --permissioned', 'Enable permissioned mode for CREATEX factory', { default: false })
+  .option('-c, --chain-id [integer:integer]', 'EVM network chain ID', { value: v => Number(v) })
+  .option('-y, --permissioned', 'Enable permissioned mode for CREATEX factory', { default: false, depends: ['sender'] })
+  .option('-s, --sender [address:address]', 'Message sender address', { value: (v) => { return v as `0x${string}` } })
   .option('-t, --threads [integer:integer]', 'Number of worker threads to use', { default: navigator.hardwareConcurrency || 1 })
-  .action(async ({ initcodeHash, pattern, sender: msgSender, deployer, chainId, crosschain, permissioned, threads }) => {
+  .action(async ({ initcodeHash, pattern, deployer, crosschain, chainId, permissioned, sender: msgSender, threads }) => {
     writeOut(`Searching with ${threads} workers...`)
 
     const startTime = performance.now()
@@ -46,14 +52,17 @@ program
       process.exit(0)
     })
 
+    const createxOpts: CreatexOpts = {
+      ...(permissioned && { permissioned: { msgSender: msgSender as `0x${string}` } }),
+      ...(crosschain && { crosschain: { chainId: Number(chainId) } }),
+    }
+
     try {
       const result = await searchWithWorkers({
-        initcodeHash: initcodeHash as `0x${string}`,
-        pattern: pattern as `0x${string}`,
-        msgSender: msgSender as `0x${string}`,
-        deployer: deployer as `0x${string}`,
-        chainId: typeof chainId === 'number' ? chainId : undefined,
-        createxOpts: { crosschain, permissioned },
+        initcodeHash,
+        pattern,
+        deployer,
+        createxOpts,
       }, {
         threads: Number(threads),
         onProgress: (stats) => {

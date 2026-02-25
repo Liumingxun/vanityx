@@ -1,23 +1,23 @@
-import type { SearchVanityInput, SearchVanityOptions, SearchVanityResult, SearchVanityStats } from 'vanityx'
+import type { Input, Options, Result, Stats } from 'vanityx'
 import { searchVanity } from 'vanityx'
 
 interface WorkerMessage {
   type: 'search'
-  data: SearchVanityInput
+  data: Input
 }
 
 type WorkerResponse = {
   type: 'result'
-  data: SearchVanityResult
+  data: Result
 } | {
   type: 'progress'
-  data: SearchVanityStats
+  data: Stats
 }
 
 addEventListener('message', (ev: MessageEvent<WorkerMessage>) => {
   const { type, data } = ev.data
   if (type === 'search') {
-    const options: SearchVanityOptions = {
+    const options: Options = {
       onProgress: (stats) => {
         postMessage({ type: 'progress', data: stats } satisfies WorkerResponse)
       },

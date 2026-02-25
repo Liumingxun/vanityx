@@ -8,14 +8,12 @@ const initcodeHash = '0x56b90c57ea3b6dfd7d0be3027c7508e333196786f9863ba6d87df641
 bench('search', () => {
   searchVanity({
     deployer: CREATEX_FACTORY_ADDRESS,
-    msgSender: ethAddress,
     pattern: '0xabcdef*',
     initcodeHash,
     createxOpts: {
-      crosschain: true,
-      permissioned: true,
+      crosschain: { chainId: 1 },
+      permissioned: { msgSender: ethAddress },
     },
-    chainId: 1,
   }, {
     onProgress: ({ attempts }) => {
       return attempts < 100_000

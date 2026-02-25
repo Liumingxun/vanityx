@@ -22,16 +22,21 @@ interface GetGuardedSaltInput {
  * getGuardedSalt(exampleInput)
  * ```
  */
-function getGuardedSalt(input: GetGuardedSaltInput): Hex {
-  const { salt, chainId, permissioned, crosschain } = GetGuardedSaltArgsSchema.parse(input)
-  return bytesToHex(computeGuardedSalt({ salt, chainId, permissioned, crosschain }))
+function getGuardedSalt(input: GetGuardedSaltInput, to?: 'hex'): Hex
+function getGuardedSalt(input: GetGuardedSaltInput, to: 'bytes'): ByteArray
+function getGuardedSalt(input: GetGuardedSaltInput, to: 'hex' | 'bytes' = 'hex'): Hex | ByteArray {
+  const { salt, permissioned, crosschain } = GetGuardedSaltArgsSchema.parse(input)
+  return computeGuardedSalt({
+    salt,
+    permissioned,
+    crosschain,
+  }, to as any)
 }
 
 interface ComputeGuardedSaltInput {
   salt: Hex
-  permissioned: boolean
-  crosschain: boolean
-  chainId?: number | undefined
+  crosschain?: { chainId: number } | undefined
+  permissioned?: { msgSender: Address } | undefined
 }
 
 /**
@@ -45,41 +50,40 @@ interface ComputeGuardedSaltInput {
  * ```ts
  * const exampleInput: ComputeGuardedSaltInput = {
  *   salt: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee010000000000000000000000',
- *   permissioned: true,
- *   crosschain: true,
- *   chainId: 1,
+ *   permissioned: { msgSender: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' },
+ *   crosschain: { chainId: 1 },
  * }
  * computeGuardedSalt(exampleInput)
  * ```
  */
-function computeGuardedSalt({ salt, chainId, permissioned, crosschain }: ComputeGuardedSaltInput): ByteArray {
+function computeGuardedSalt({ salt, permissioned, crosschain }: ComputeGuardedSaltInput, to?: 'hex'): Hex
+function computeGuardedSalt({ salt, permissioned, crosschain }: ComputeGuardedSaltInput, to: 'bytes'): ByteArray
+function computeGuardedSalt({ salt, permissioned, crosschain }: ComputeGuardedSaltInput, to: 'hex' | 'bytes' = 'hex'): Hex | ByteArray {
   // https://github.com/Liumingxun/vanity2/blob/f75ad02613713e544aec70f2b47220ce96e8f87e/packages/createx_guard/schema.ts#L64-L79
   if (permissioned && crosschain) {
-    const msgSender = salt.slice(0, 42) as Address
     // https://github.com/pcaversaccio/createx/blob/73d517ef6639a052ce02da245a9d3ccfc185ba6b/src/CreateX.sol#L889-L891
     return keccak256(encodeAbiParameters(
       [{ type: 'address' }, { type: 'uint256' }, { type: 'bytes32' }],
-      [msgSender, BigInt(chainId!), salt],
-    ), 'bytes')
+      [permissioned.msgSender, BigInt(crosschain.chainId), salt],
+    ), to)
   }
   else if (permissioned) {
-    const msgSender = salt.slice(0, 42) as Address
     // https://github.com/pcaversaccio/createx/blob/73d517ef6639a052ce02da245a9d3ccfc185ba6b/src/CreateX.sol#L892-L894
     return keccak256(encodeAbiParameters(
       [{ type: 'address' }, { type: 'bytes32' }],
-      [msgSender, salt],
-    ), 'bytes')
+      [permissioned.msgSender, salt],
+    ), to)
   }
   else if (crosschain) {
     // https://github.com/pcaversaccio/createx/blob/73d517ef6639a052ce02da245a9d3ccfc185ba6b/src/CreateX.sol#L898-L901
     return keccak256(encodeAbiParameters(
       [{ type: 'bytes32' }, { type: 'bytes32' }],
-      [numberToHex((chainId!), { size: 32 }), salt],
-    ), 'bytes')
+      [numberToHex((crosschain.chainId), { size: 32 }), salt],
+    ), to)
   }
 
   // https://github.com/pcaversaccio/createx/blob/73d517ef6639a052ce02da245a9d3ccfc185ba6b/src/CreateX.sol#L907-L910
-  return keccak256(encodeAbiParameters([{ type: 'bytes32' }], [salt]), 'bytes')
+  return keccak256(encodeAbiParameters([{ type: 'bytes32' }], [salt]), to)
 }
 
 export { computeGuardedSalt, getGuardedSalt }

@@ -1,61 +1,11 @@
-import type { Address, ByteArray, Hash, Hex } from 'viem'
+import type { Attempt, CreatexOpts, CrtxIterInput, Input, Options, Result, Stats, StdIterInput } from '#types'
 import { CREATEX_FACTORY_ADDRESS, SearchVanityArgsSchema } from '#schema'
 import { Glob } from 'bun'
 import { computeGuardedSalt } from 'createx_guard'
 import { bytesToHex, getContractAddress } from 'viem'
 
-interface SearchVanityBaseInput {
-  pattern: Hex
-  deployer: Address
-  msgSender: Address
-  chainId?: number | undefined
-  createxOpts?: {
-    crosschain?: boolean | undefined
-    permissioned?: boolean | undefined
-  } | undefined
-}
-
-type SearchVanityInput = SearchVanityBaseInput & ({
-  initcode: Hex
-  initcodeHash?: never
-} | {
-  initcode?: never
-  initcodeHash: Hash
-})
-
-interface SearchVanityStats {
-  attempts: number
-  timeMs: number
-}
-
-interface SearchVanityOptions {
-  onProgress?: (stats: SearchVanityStats) => boolean | void
-  progressInterval?: number
-}
-
-interface SearchVanityResult {
-  salt: Hex
-  address: Address
-  guardedSalt?: Hex | undefined
-}
-
-interface SearchVanityIteratorInput {
-  from: Hex
-  bytecodeHash: Hash
-  crosschain: boolean
-  permissioned: boolean
-  chainId?: number | undefined
-  saltPrefixBytes: ByteArray
-}
-
-interface SearchVanityAttempt {
-  salt: ByteArray | Hex
-  guardedSalt?: ByteArray | undefined
-  address: Address
-}
-
-function* createXIterator(input: SearchVanityIteratorInput): Generator<SearchVanityAttempt> {
-  const { from, bytecodeHash, crosschain, permissioned, chainId, saltPrefixBytes } = input
+function* createXIterator(input: CrtxIterInput): Generator<Attempt> {
+  const { from, bytecodeHash, crosschain, permissioned, saltPrefixBytes } = input
 
   const saltBytes = new Uint8Array(32)
   saltBytes.set(saltPrefixBytes)
@@ -66,10 +16,9 @@ function* createXIterator(input: SearchVanityIteratorInput): Generator<SearchVan
     const salt = bytesToHex(saltBytes)
     const guardedSalt = computeGuardedSalt({
       salt,
-      crosschain,
       permissioned,
-      chainId,
-    })
+      crosschain,
+    }, 'bytes')
 
     const address = getContractAddress({
       opcode: 'CREATE2',
@@ -86,7 +35,7 @@ function* createXIterator(input: SearchVanityIteratorInput): Generator<SearchVan
   }
 }
 
-function* standardIterator(input: SearchVanityIteratorInput): Generator<SearchVanityAttempt> {
+function* standardIterator(input: StdIterInput): Generator<Attempt> {
   const { from, bytecodeHash } = input
 
   const salt = new Uint8Array(32)
@@ -108,8 +57,8 @@ function* standardIterator(input: SearchVanityIteratorInput): Generator<SearchVa
   }
 }
 
-function searchVanity(input: SearchVanityInput, options?: SearchVanityOptions): SearchVanityResult | null {
-  const { deployer: from, initcodeHash: bytecodeHash, pattern, saltPrefixBytes, permissioned, crosschain, chainId }
+function searchVanity(input: Input, options?: Options): Result | null {
+  const { deployer: from, initcodeHash: bytecodeHash, pattern, saltPrefixBytes, permissioned, crosschain }
     = SearchVanityArgsSchema.parse(input)
   const glob = new Glob(pattern)
 
@@ -120,8 +69,8 @@ function searchVanity(input: SearchVanityInput, options?: SearchVanityOptions): 
 
   const isCreateX = from === CREATEX_FACTORY_ADDRESS
   const iterator = isCreateX
-    ? createXIterator({ from, bytecodeHash, crosschain, permissioned, chainId, saltPrefixBytes })
-    : standardIterator({ from, bytecodeHash, crosschain, permissioned, chainId, saltPrefixBytes })
+    ? createXIterator({ from, bytecodeHash, crosschain, permissioned, saltPrefixBytes })
+    : standardIterator({ from, bytecodeHash })
 
   for (const attempt of iterator) {
     attempts++
@@ -155,4 +104,4 @@ function searchVanity(input: SearchVanityInput, options?: SearchVanityOptions): 
 }
 
 export { createXIterator, searchVanity, standardIterator }
-export type { SearchVanityAttempt, SearchVanityInput, SearchVanityIteratorInput, SearchVanityOptions, SearchVanityResult, SearchVanityStats }
+export type { Attempt, CreatexOpts, CrtxIterInput, Input, Options, Result, Stats, StdIterInput }

@@ -15,7 +15,8 @@
   ],
   "imports": {
     "#schema": "./src/schema.ts",
-    "#search": "./src/search.ts"
+    "#search": "./src/search.ts",
+    "#types": "./types/index.ts"
   },
   "exports": {
     ".": "./src/search.ts",

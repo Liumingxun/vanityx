@@ -6,9 +6,8 @@ summary(() => {
   bench('computeGuardedSalt', () => {
     computeGuardedSalt({
       salt: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee010000000000000000000000',
-      permissioned: true,
-      crosschain: true,
-      chainId: 1,
+      permissioned: { msgSender: ethAddress },
+      crosschain: { chainId: 1 },
     })
   })
 

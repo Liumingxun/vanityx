@@ -14,7 +14,8 @@
     "createx"
   ],
   "imports": {
-    "#main": "./src/index.ts"
+    "#main": "./src/index.ts",
+    "#type": "./src/cli.type.ts"
   },
   "bin": {
     "vanityx": "./bin/index.ts"
@@ -23,6 +24,7 @@
     "src"
   ],
   "scripts": {
+    "test": "bun run ./bin/index.ts",
     "build": "bun build --compile --bytecode --minify bin/index.ts src/worker.ts --outfile=dist/vanityx"
   },
   "dependencies": {
