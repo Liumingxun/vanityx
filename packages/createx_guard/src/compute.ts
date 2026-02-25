@@ -1,6 +1,6 @@
 import type { Address, ByteArray, Hex } from 'viem'
 import { GetGuardedSaltArgsSchema } from '#schema'
-import { bytesToHex, encodeAbiParameters, keccak256, numberToHex } from 'viem'
+import { encodeAbiParameters, keccak256, numberToHex } from 'viem'
 
 interface GetGuardedSaltInput {
   salt: Hex | ByteArray
@@ -15,8 +15,8 @@ interface GetGuardedSaltInput {
  * @example
  * ```ts
  * const exampleInput: GetGuardedSaltInput = {
- *   salt: '0x0000000000000000000000000000000000000000000000000000000000000000',
- *   msgSender: '0x1111111111111111111111111111111111111111',
+ *   salt: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee010000000000000000000000',
+ *   msgSender: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
  *   chainId: 1,
  * }
  * getGuardedSalt(exampleInput)

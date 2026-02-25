@@ -1,4 +1,8 @@
-# vanityx CLI
+# @vanityx/cli
+
+English | [中文](./README.zh-cn.md)
+
+---
 
 A command-line tool for searching Ethereum **CREATE2** contract addresses.
 

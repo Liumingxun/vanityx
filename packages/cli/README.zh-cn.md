@@ -1,4 +1,8 @@
-# vanityx CLI
+# @vanityx/cli
+
+[English](./README.md) | 中文
+
+---
 
 一个搜索以太坊 **CREATE2** 合约地址的命令行工具。
 
