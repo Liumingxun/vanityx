@@ -27,7 +27,7 @@ If you prefer not to [install/use `Bun`][bun] locally, you can download pre-comp
 - `search`: Multi-threaded search for CREATE2 addresses matching a pattern.
 - `completions`: Generate shell auto-completion scripts.
 
-> ![TIP]
+> [!TIP]
 > Run `vanityx <command> --help` to view detailed usage and parameter descriptions for each subcommand.
 
 ### Examples
@@ -78,7 +78,7 @@ vanityx search -i "$INITCODE_HASH" -p "$PATTERN" -xy -c "$CHAIN_ID" -s "$SENDER"
 - `0x{aa,bb}*`: Multiple prefix options.
 - `0x[0-4][c-e]*`: Character set range match.
 
-> ![CAUTION]
+> [!CAUTION]
 >
 > - Validity checks for `pattern` are limited. Ensure you input a correct `glob` pattern.
 > - A valid but incorrect `pattern` may fail to match expected addresses (e.g., `0xVVV*VVV`).

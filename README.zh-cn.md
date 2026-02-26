@@ -84,7 +84,7 @@ console.log(result)
 - `0x{aa,bb}*`：多前缀可选
 - `0x[0-4][c-e]*`：字符集范围匹配
 
-> ![CAUTION]
+> [!CAUTION]
 >
 > - `pattern` 合法性检查有限，请确保输入正确的 `glob` 模式
 > - 有效但错误的 `pattern` 可能导致无法匹配预期的地址，例如 `0xVVV*VVV`

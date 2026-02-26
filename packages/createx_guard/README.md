@@ -44,7 +44,7 @@ const guardedSalt = getGuardedSalt({
 
 Performs raw computation **without validation**, treating provided configuration as enabling protection. Use this if you have already parsed the flags or want to bypass safety checks.
 
-> ![WARNING]
+> [!WARNING]
 >
 > Only use this if you fully understand CreateX salt rules. Incorrect parameters may lead to unintended addresses, failed deployments, or other risks.
 

@@ -84,7 +84,7 @@ console.log(result)
 - `0x{aa,bb}*`: Multiple prefix options.
 - `0x[0-4][c-e]*`: Character set range match.
 
-> ![CAUTION]
+> [!CAUTION]
 >
 > - Validity checks for `pattern` are limited. Ensure you input a correct `glob` pattern.
 > - A valid but incorrect `pattern` may fail to match expected addresses (e.g., `0xVVV*VVV`).
