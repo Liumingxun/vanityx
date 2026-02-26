@@ -14,7 +14,7 @@
     "createx"
   ],
   "imports": {
-    "#manager": "./src/index.ts",
+    "#manager": "./src/manager.ts",
     "#cli.type": "./src/cli.type.ts"
   },
   "bin": {

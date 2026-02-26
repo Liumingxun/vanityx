@@ -4,7 +4,7 @@
 
 ---
 
-一个搜索以太坊 **CREATE2** 合约地址的命令行工具。
+一个用于搜索以太坊 CREATE2 vanity 地址的命令行工具。API 库请查看 [vanityx]。
 
 - 支持 [CreateX] 盐值规则。
 - 支持多线程并行搜索。
@@ -101,6 +101,7 @@ vanityx search -i "$INITCODE_HASH" -p "$PATTERN" -xy -c "$CHAIN_ID" -s "$SENDER"
 [bun]: https://bun.com/docs/installation 'Bun installation'
 [bun_glob]: https://bun.sh/docs/runtime/glob 'Bun Glob documentation'
 [createx]: /pcaversaccio/createx 'createx factory'
+[vanityx]: /Liumingxun/vanityx/blob/main/README.md 'vanityx main package'
 [releases]: /Liumingxun/vanityx/releases 'vanityx releases'
 [benchmark]: /Liumingxun/vanityx/blob/main/BENCHMARK.md 'vanityx benchmark'
 [benchmark_script]: /Liumingxun/vanityx/blob/main/package.json#L28 'vanityx benchmark script'

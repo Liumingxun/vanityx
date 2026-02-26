@@ -1,120 +1,150 @@
 # vanityx
 
-A TypeScript toolkit for hunting Ethereum CREATE2 vanity (and CreateX-guarded) contract addresses.
+[English](./README.md) | 中文
 
-## Why this exists
+---
 
-- **CREATE2 without footguns** – all inputs are validated upfront through `zod`, so malformed hex, mixed-case deployers, or mismatched chains fail fast.
-- **CreateX-aware salts** – native support for the [CreateX Guard factory](packages/createx_guard/README.md), including permissioned and crosschain modifiers.
-- **Composable core** – a deterministic generator (`searchVanityIterator`) that you can plug into GUIs, CLIs, workers, or distributed search pools.
-- **Pragmatic pattern matching** – leverages Bun's `Glob` so you can describe vanity rules with wildcards instead of hand-rolled regexes.
+用 TypeScript 在 [Bun] 运行时搜索以太坊 `CREATE2` 的 vanity 地址；并且原生支持 [CreateX] 的盐值规则。
 
-## Installation
+- 你给出：`pattern` + `deployer` + `initcode`/`initcodeHash`
+- 它输出：命中的 `salt` / `guardedSalt` + 目标合约地址
+
+> CLI 工具在这里：[@vanityx/cli]
+
+## 亮点
+
+- **Iterator 优先**：暴露迭代器，方便你接入并行/分布式/自定义终止条件
+- **CreateX 支持**：自动处理守卫盐，覆盖 permissioned / crosschain 两种模式
+- **Pattern 直观**：用 Bun 的 `Glob` 匹配 `0x…` 地址字符串
+- **API 简洁**：一个 `searchVanity()`，可选进度回调
+
+## 环境要求
+
+这个包在运行时使用了 Bun 的 `Glob` 用于 pattern 匹配，因此 **运行环境需要 Bun**。
+
+如果你想要开箱即用、带多线程并行的工具，可以直接在 [releases] 下载预编译的二进制文件。
+
+## 安装
 
 ```bash
 pnpm add vanityx
 # or
-npm install vanityx
+bun add vanityx
 ```
 
-> Runtime target: Node 20+ or Bun 1.1+. The search loop uses `crypto.getRandomValues` and `performance.now`, both available in modern runtimes.
+## 快速开始
 
-## Quick start
+### CreateX，适用于 permissioned / crosschain
+
+当 `deployer` 是 CreateX 工厂地址并且启用了保护模式时，`vanityx` 会自动走 CreateX 规则并返回 `guardedSalt`。
+
+```ts
+import { searchVanity } from 'vanityx'
+import { CREATEX_FACTORY_ADDRESS } from 'vanityx/schema'
+
+const result = searchVanity({
+  pattern: '0x1234*',
+  deployer: CREATEX_FACTORY_ADDRESS,
+  initcodeHash: '0x0000000000000000000000000000000000000000000000000000000000000000',
+  createxOpts: {
+    crosschain: { chainId: 1 },
+    permissioned: { msgSender: '0x0000000000000000000000000000000000000000' },
+  },
+})
+
+console.log(result)
+```
+
+### 标准 CREATE2，适用于其他 deployer
 
 ```ts
 import { searchVanity } from 'vanityx'
 
 const result = searchVanity({
-  pattern: '0x1234*', // hex glob; * and ? are allowed
-  deployer: '0xba5ed099633d3b313e4d5f7bdc1305d3c28ba5ed',
-  msgSender: '0xabc123abc123abc123abc123abc123abc123abcd',
-  initcode: '0x600060005560016000f3',
-  createxOpts: {
-    permissioned: true,
-    crosschain: true,
+  pattern: '0xcafe*',
+  deployer: '0x0000000000000000000000000000000000000000',
+  initcodeHash: '0x0000000000000000000000000000000000000000000000000000000000000000',
+}, {
+  progressInterval: 50_000,
+  onProgress: ({ attempts, timeMs }) => {
+    console.log(`Tried ${attempts} salts in ${timeMs}ms...`)
   },
-  chainId: 10,
 })
 
-if (result) {
-  console.log('Salt:', result.salt)
-  console.log('Guarded salt (if CreateX):', result.guardedSalt)
-  console.log('Address:', result.address)
-}
+console.log(result)
 ```
 
-### Streaming progress
+## Pattern 语法
 
-```ts
-import { searchVanity } from 'vanityx'
+`pattern` 基于 Bun 的 [`Glob`][bun_glob] 语法匹配地址。常用写法：
 
-const found = searchVanity(
-  {
-    pattern: '0x*dead',
-    deployer: '0x1234...beef',
-    msgSender: '0xbeef...cafe',
-    initcodeHash: '0x9a54...'
-  },
-  {
-    progressInterval: 5_000,
-    onProgress: ({ attemptsPerSec }) => {
-      console.log('Speed', attemptsPerSec.toFixed(0), 'addr/s')
-      return true // return false to stop early
-    },
-  },
-)
-```
+- `0xcafe*`：前缀匹配
+- `0x*beef`：后缀匹配
+- `0x*bee?`：`?` 匹配单个十六进制字符
+- `0x{aa,bb}*`：多前缀可选
+- `0x[0-4][c-e]*`：字符集范围匹配
 
-## API surface
+> ![CAUTION]
+>
+> - `pattern` 合法性检查有限，请确保输入正确的 `glob` 模式
+> - 有效但错误的 `pattern` 可能导致无法匹配预期的地址，例如 `0xVVV*VVV`
+> - 注意添加 `*` 以避免过早固定地址长度，例如 `0x1234*` 而不是 `0x1234`
+> - `**` 和 `!` 在地址模式里没有特殊含义，不建议使用
+
+## API 概览
 
 ### `searchVanity(input, options?)`
 
-- Validates `input` with `SearchVanityArgsSchema` and performs the search loop.
-- Returns `{ salt, guardedSalt?, address }` or `null` when aborted via `onProgress`.
+- 输入：
+  - `pattern`: 必须以 `0x` 开头
+  - `deployer`: 合约部署器地址，用于 `CREATE2` 地址推导
+  - `initcode` 或 `initcodeHash`: 二选一
+  - `createxOpts?`: CreateX 保护选项。只有当 `deployer === CREATEX_FACTORY_ADDRESS` 且启用保护时才会生效
+- 输出：
+  - 命中则返回 `{ salt, address, guardedSalt? }`
+  - 若在 `onProgress` 回调里返回 `false` 则提前停止并返回 `null`
 
-### `searchVanityIterator(config)`
+### 迭代器
 
-- Low-level generator when you need full control over scheduling, distribution, or deterministic replay.
-- Emits `{ salt, guardedSalt?, address, attempts, timeMs }` for each random salt.
+如果你更想自己控制搜索流程，可以直接用迭代器：
 
-### `SearchVanityArgsSchema`
+- `standardIterator()`：标准 `CREATE2` 尝试生成器
+- `createXIterator()`：CreateX 尝试生成器，会生成 `guardedSalt`
 
-- Re-exported zod schema if you need compile-time inference or upstream validation.
-- Accepts either `initcode` (auto-hashed with `keccak256`) or a precomputed `initcodeHash`.
+## 性能预期
 
-## Data model & guards
+搜索本质是随机采样：每固定 $n$ 个十六进制字符，期望尝试次数约 $16^n$。
 
-| Field                      | Notes                                                                                                              |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `pattern`                  | Hex glob (must start with `0x`). Wildcards run through Bun `Glob`, so `?` matches a nibble, `[]` ranges work, etc. |
-| `deployer`                 | Normalized to lower-case via `createx_guard`'s `AddressSchema`.                                                    |
-| `msgSender`                | Converted to bytes; only needed when you set `permissioned`.                                                       |
-| `chainId`                  | Required when `createxOpts.crosschain` is `true` for the CreateX factory.                                          |
-| `createxOpts.permissioned` | Prefixes the salt with `msgSender` (20 bytes) so the Guard contract approves it.                                   |
-| `createxOpts.crosschain`   | Marks the salt suffix so the Guard contract emits cross-chain proofs; incompatible without `chainId`.              |
+- 例如：`0x1234*` 期望尝试约 $16^4 = 65,536$ 次。
+- 具体性能参考[基准测试报告][benchmark]或运行[基准测试脚本][benchmark_script]。
 
-### Salt layout
+## FAQ
 
-- Vanilla CREATE2 paths leave the 32-byte salt fully random.
-- Permissioned salts: bytes `[0..19]` are the sender, the remainder is random.
-- Crosschain salts: byte `20` is set to `0x01` to signal the Guard contract.
-- Combined mode: both rules apply before `computeGuardedSalt` wraps the final salt passed to CREATE2.
+### 为什么我在 Node.js 里跑不起来？
 
-## Performance notes
+因为运行时使用了 Bun 的 `Glob`，它不是 Node 标准库的一部分。如果你在使用 Bun 运行时遇到了问题，可以：
 
-- Every loop iteration makes exactly one `getContractAddress` call and one `crypto.getRandomValues` invocation.
-- Progress stats compute attempts/sec via `attempts / timeMs`. If you need moving averages, wrap `onProgress` and store your own counters.
-- Benchmarks live under `bench/*.bench.ts` and run with `pnpm bench` (uses `mitata`).
+- 用 CLI 的预编译二进制。文档在 [@vanityx/cli]
+- 或者把匹配部分替换成你自己的 matcher。你可以直接消费迭代器输出，然后自己做 match
 
-## Developing locally
+### 这能“保证”多久找到吗？
 
-```bash
-pnpm install
-pnpm bench        # micro benchmarks
-pnpm build        # emits dist/ via tsdown
-pnpm test         # run workspace tests (see packages/*)
-```
+不能。它是随机采样；只有“期望尝试次数”。你固定得越多，例如更长的前缀或后缀，搜索时间会指数级上升。
 
-- Source is plain TypeScript under `src/`.
-- Build output is handled by [`tsdown`](https://github.com/egoist/tsdown) so the published package stays ESM-first with type definitions.
-- Additional helpers live under `packages/` (`createx_guard`, CLI wrappers, Hardhat testcases).
+## 项目结构
+
+- `src/`：核心库代码，包含 `searchVanity`、迭代器和 schema。
+- `types/`：对外导出的 TypeScript 类型。
+- `packages/cli/`：命令行工具，基于核心库构建，并支持并行。
+- `packages/createx_guard/`：CreateX 守卫盐计算库。
+- `packages/createx_guard_hh/`：`createx_guard` 的 hardhat 测试项目。
+- `bench/`：基准测试脚本。
+
+[createx]: /pcaversaccio/createx 'createx factory'
+[bun]: https://bun.com/docs/installation 'Bun installation'
+[bun_glob]: https://bun.sh/docs/runtime/glob 'Bun Glob documentation'
+[releases]: /Liumingxun/vanityx/releases 'vanityx releases'
+[@vanityx/cli]: /Liumingxun/vanityx/blob/main/packages/cli/README.zh-cn.md 'vanityx CLI'
+[@vanityx/createx_guard]: /Liumingxun/vanityx/blob/main/packages/createx_guard/README.zh-cn.md 'vanityx CreateX Guarded Salt'
+[benchmark]: /Liumingxun/vanityx/blob/main/BENCHMARK.md 'vanityx benchmark'
+[benchmark_script]: /Liumingxun/vanityx/blob/main/package.json#L28 'vanityx benchmark script'

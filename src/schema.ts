@@ -1,4 +1,4 @@
-import { AddressSchema, CreateXOptionsSchema } from 'createx_guard/schema'
+import { AddressSchema, CreateXOptionsSchema } from '@vanityx/createx_guard/schema'
 import { bytesToHex, hexToBytes, isHash, isHex, keccak256 } from 'viem'
 import { z } from 'zod'
 
