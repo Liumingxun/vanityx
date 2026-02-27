@@ -120,6 +120,12 @@ Searching is essentially random sampling: for a fixed $n$ hexadecimal characters
 
 ## FAQ
 
+### How should I use `guardedSalt`?
+
+Usually you don't need to use `guardedSalt` directly, it's mainly an informational field.
+
+This concept primarily exists for CreateX internal scenarios and isn't very meaningful for most users. When deploying the contract, you can just use `salt`.
+
 ### Why does it not run on Node.js?
 
 It uses Bun `Glob` at runtime, and Node does not provide that API.
