@@ -1,4 +1,4 @@
-import type { SearchVanityInput, SearchVanityResult } from 'vanityx'
+import type { Input, Result } from 'vanityx'
 
 export interface SearchOptions {
   threads: number
@@ -16,15 +16,15 @@ interface WorkerStats {
 }
 
 export async function searchWithWorkers(
-  input: SearchVanityInput,
+  input: Input,
   options: SearchOptions,
-): Promise<SearchVanityResult> {
+): Promise<Result> {
   const { threads, onProgress } = options
   const workers: Worker[] = []
   const workerStats = new Map<number, WorkerStats>()
   let found = false
 
-  return new Promise<SearchVanityResult>((resolve, reject) => {
+  return new Promise<Result>((resolve, reject) => {
     const getAggregateStats = (): SearchProgress => {
       let totalAttempts = 0
       let maxTime = 0

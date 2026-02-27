@@ -19,25 +19,14 @@ const SaltSchema = SaltBytesSchema.transform(v => ({
   raw: v,
 }))
 
-const GetGuardedSaltTransformedBaseArgsSchema = z.object({
-  salt: SaltHexSchema,
-  permissioned: z.boolean(),
+export const CreateXOptionsSchema = z.object({
+  crosschain: z.object({ chainId: ChainIdSchema }).optional(),
+  permissioned: z.object({ msgSender: AddressSchema }).optional(),
 })
-const GetGuardedSaltTransformedArgsSchema = z.discriminatedUnion(
-  'crosschain',
-  [
-    z.object({
-      ...GetGuardedSaltTransformedBaseArgsSchema.shape,
-      chainId: z.never().optional(),
-      crosschain: z.literal(false),
-    }),
-    z.object({
-      ...GetGuardedSaltTransformedBaseArgsSchema.shape,
-      chainId: ChainIdSchema,
-      crosschain: z.literal(true),
-    }),
-  ],
-)
+
+const GetGuardedSaltTransformedArgsSchema = z.object({
+  salt: SaltHexSchema,
+}).extend(CreateXOptionsSchema.shape)
 
 const GetGuardedSaltArgsSchema = z.object({
   salt: SaltSchema,
@@ -77,12 +66,11 @@ const GetGuardedSaltArgsSchema = z.object({
   // +-------------+------------------+                           |
   // | any         |         0        |                           |
   // +-------------+------------------+---------------------------+
-  const permissioned = senderHex === msgSender
-  const crosschain = (permissioned || senderHex === zeroAddress) && redeployFlag === 1
+  const permissioned = senderHex === msgSender ? { msgSender } : undefined
+  const crosschain = (permissioned || senderHex === zeroAddress) && redeployFlag === 1 ? { chainId: chainId! } : undefined
 
   return {
     salt: bytesToHex(raw),
-    chainId: crosschain ? chainId : undefined,
     permissioned,
     crosschain,
   }

@@ -5,7 +5,7 @@
   "packageManager": "pnpm@10.28.0",
   "description": "A command-line tool for searching Ethereum CREATE2 vanity addresses.",
   "author": "lime <liumingxun@yeah.net>",
-  "license": "ISC",
+  "license": "MPL-2.0",
   "keywords": [
     "vanity",
     "address",
@@ -14,7 +14,8 @@
     "createx"
   ],
   "imports": {
-    "#main": "./src/index.ts"
+    "#manager": "./src/manager.ts",
+    "#cli.type": "./src/cli.type.ts"
   },
   "bin": {
     "vanityx": "./bin/index.ts"
@@ -23,10 +24,14 @@
     "src"
   ],
   "scripts": {
+    "test": "bun run ./bin/index.ts",
     "build": "bun build --compile --bytecode --minify bin/index.ts src/worker.ts --outfile=dist/vanityx"
   },
   "dependencies": {
     "@cliffy/command": "catalog:",
     "vanityx": "workspace:*"
+  },
+  "devDependencies": {
+    "viem": "catalog:"
   }
 }

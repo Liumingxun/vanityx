@@ -1,34 +1,34 @@
 # @vanityx/createx_guard
 
-English | [中文](./README.zh-cn.md)
+[English](./README.md) | 中文
 
 ---
 
-A lightweight utility for calculating **CreateX** factory guard salts.
+一个轻量级的 **CreateX** 守卫盐计算工具库。
 
-Handles the complex salt hashing logic for:
+用于处理以下复杂的 CreateX 盐值哈希逻辑：
 
-- **Permissioned deployments**
-- **Cross-chain redeployments**
-- **Standard deployments**
+- **Permissioned deployments**（权限部署）
+- **Cross-chain redeployments**（跨链重部署）
+- **Standard deployments**（标准部署）
 
-See [CreateX Salt Rules][createx_protection] for details.
+具体保护规则参考 [CreateX 盐值规则][createx_protection]。
 
-## Installation
+## 安装
 
 ```bash
 pnpm add @vanityx/createx_guard
 ```
 
-## Usage
+## 使用
 
-### High-level: `getGuardedSalt`
+### 高级接口：`getGuardedSalt`
 
-Validates input and **automatically infers** protection flags based on the salt structure.
+校验输入并根据盐的结构**自动推断**保护标志。
 
-- Checks if bytes 0-19 match `msg.sender`.
-- Checks if byte 20 flag enables cross-chain protection.
-- Validates that `chainId` is provided when required.
+- 检查前 20 字节是否匹配 `msg.sender`。
+- 检查第 21 字节是否启用跨链保护。
+- 在需要时校验 `chainId` 是否提供。
 
 ```ts
 import { getGuardedSalt } from '@vanityx/createx_guard'
@@ -40,13 +40,13 @@ const guardedSalt = getGuardedSalt({
 })
 ```
 
-### Low-level: `computeGuardedSalt`
+### 低级接口：`computeGuardedSalt`
 
-Performs raw computation **without validation**, treating provided configuration as enabling protection. Use this if you have already parsed the flags or want to bypass safety checks.
+执行纯计算，**不进行校验**，提供配置视为启用保护。如果你已经解析了标志位或想跳过安全检查，请使用此接口。
 
 > [!WARNING]
 >
-> Only use this if you fully understand CreateX salt rules. Incorrect parameters may lead to unintended addresses, failed deployments, or other risks.
+> 仅当你完全理解 CreateX 盐值规则并已正确设置参数时才使用此接口，否则可能导致非预期地址、部署失败或其他风险。
 
 ```ts
 import { computeGuardedSalt } from '@vanityx/createx_guard'
@@ -58,9 +58,9 @@ const guardedSalt = computeGuardedSalt({
 })
 ```
 
-## Salt Rules Reference
+## 盐值规则参考
 
-Simply put, `permissioned` matches the first 20 bytes of the raw salt against `msg.sender`, and `crosschain` is enabled via the 21st byte flag. `getGuardedSalt` automatically validates these protections and handles reverts, while `computeGuardedSalt` assumes you know what you are doing.
+简单来说，`permissioned` 将会通过原始盐值的前 20 字节与 `msg.sender` 进行匹配，而 `crosschain` 则通过第 21 字节的标志位来启用。使用 `getGuardedSalt` 计算将会根据上述规则自动校验相应的保护，并处理 revert 情况。使用 `computeGuardedSalt` 则需要你自己确保输入的正确性。根据这些规则，部署可以分为以下几类：
 
 ```text
 ╔═════════════════╦══════╦══════╦════════╗

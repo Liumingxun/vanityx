@@ -5,7 +5,7 @@
   "packageManager": "pnpm@10.28.0",
   "description": "A TypeScript library for searching Ethereum CREATE2 vanity addresses.",
   "author": "lime <liumingxun@yeah.net>",
-  "license": "ISC",
+  "license": "MPL-2.0",
   "keywords": [
     "vanity",
     "address",
@@ -15,21 +15,23 @@
   ],
   "imports": {
     "#schema": "./src/schema.ts",
-    "#search": "./src/search.ts"
+    "#search": "./src/search.ts",
+    "#types": "./types/index.ts"
   },
   "exports": {
     ".": "./src/search.ts",
     "./schema": "./src/schema.ts"
   },
   "files": [
-    "src"
+    "src",
+    "types"
   ],
   "scripts": {
     "bench": "bun run --sequential bench/*.bench.ts"
   },
   "dependencies": {
+    "@vanityx/createx_guard": "workspace:*",
     "bun": "catalog:",
-    "createx_guard": "workspace:*",
     "viem": "catalog:",
     "zod": "catalog:"
   },
