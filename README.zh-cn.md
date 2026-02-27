@@ -140,11 +140,11 @@ console.log(result)
 - `packages/createx_guard_hh/`：`createx_guard` 的 hardhat 测试项目。
 - `bench/`：基准测试脚本。
 
-[createx]: /pcaversaccio/createx 'createx factory'
+[createx]: https://github.com/pcaversaccio/createx 'createx factory'
 [bun]: https://bun.com/docs/installation 'Bun installation'
 [bun_glob]: https://bun.sh/docs/runtime/glob 'Bun Glob documentation'
-[releases]: /Liumingxun/vanityx/releases 'vanityx releases'
-[@vanityx/cli]: /Liumingxun/vanityx/blob/main/packages/cli/README.zh-cn.md 'vanityx CLI'
-[@vanityx/createx_guard]: /Liumingxun/vanityx/blob/main/packages/createx_guard/README.zh-cn.md 'vanityx CreateX Guarded Salt'
-[benchmark]: /Liumingxun/vanityx/blob/main/BENCHMARK.md 'vanityx benchmark'
-[benchmark_script]: /Liumingxun/vanityx/blob/main/package.json#L28 'vanityx benchmark script'
+[releases]: https://github.com/Liumingxun/vanityx/releases 'vanityx releases'
+[@vanityx/cli]: https://github.com/Liumingxun/vanityx/blob/main/packages/cli/README.zh-cn.md 'vanityx CLI'
+[@vanityx/createx_guard]: https://github.com/Liumingxun/vanityx/blob/main/packages/createx_guard/README.zh-cn.md 'vanityx CreateX Guarded Salt'
+[benchmark]: https://github.com/Liumingxun/vanityx/blob/main/BENCHMARK.md 'vanityx benchmark'
+[benchmark_script]: https://github.com/Liumingxun/vanityx/blob/main/package.json#L28 'vanityx benchmark script'

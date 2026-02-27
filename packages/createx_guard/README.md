@@ -74,4 +74,4 @@ Simply put, `permissioned` matches the first 20 bytes of the raw salt against `m
 ╚═════════════════╩══════════════════════╝
 ```
 
-[createx_protection]: https://github.com/pcaversaccio/createx?tab=readme-ov-file#permissioned-deploy-protection-and-cross-chain-redeploy-protection
+[createx_protection]: https://github.comhttps://github.com/pcaversaccio/createx?tab=readme-ov-file#permissioned-deploy-protection-and-cross-chain-redeploy-protection

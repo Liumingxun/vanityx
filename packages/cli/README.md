@@ -99,7 +99,7 @@ Searching is essentially random sampling: for a fixed $n$ hexadecimal characters
 
 [bun]: https://bun.com/docs/installation 'Bun installation'
 [bun_glob]: https://bun.sh/docs/runtime/glob 'Bun Glob documentation'
-[createx]: /pcaversaccio/createx 'createx factory'
-[releases]: /Liumingxun/vanityx/releases 'vanityx releases'
-[benchmark]: /Liumingxun/vanityx/blob/main/BENCHMARK.md 'vanityx benchmark'
-[benchmark_script]: /Liumingxun/vanityx/blob/main/package.json#L28 'vanityx benchmark script'
+[createx]: https://github.com/pcaversaccio/createx 'createx factory'
+[releases]: https://github.com/Liumingxun/vanityx/releases 'vanityx releases'
+[benchmark]: https://github.com/Liumingxun/vanityx/blob/main/BENCHMARK.md 'vanityx benchmark'
+[benchmark_script]: https://github.com/Liumingxun/vanityx/blob/main/package.json#L28 'vanityx benchmark script'

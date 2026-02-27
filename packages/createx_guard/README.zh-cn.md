@@ -74,4 +74,4 @@ const guardedSalt = computeGuardedSalt({
 ╚═════════════════╩══════════════════════╝
 ```
 
-[createx_protection]: https://github.com/pcaversaccio/createx?tab=readme-ov-file#permissioned-deploy-protection-and-cross-chain-redeploy-protection
+[createx_protection]: https://github.comhttps://github.com/pcaversaccio/createx?tab=readme-ov-file#permissioned-deploy-protection-and-cross-chain-redeploy-protection

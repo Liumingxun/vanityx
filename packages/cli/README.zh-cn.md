@@ -100,8 +100,8 @@ vanityx search -i "$INITCODE_HASH" -p "$PATTERN" -xy -c "$CHAIN_ID" -s "$SENDER"
 
 [bun]: https://bun.com/docs/installation 'Bun installation'
 [bun_glob]: https://bun.sh/docs/runtime/glob 'Bun Glob documentation'
-[createx]: /pcaversaccio/createx 'createx factory'
-[vanityx]: /Liumingxun/vanityx/blob/main/README.md 'vanityx main package'
-[releases]: /Liumingxun/vanityx/releases 'vanityx releases'
-[benchmark]: /Liumingxun/vanityx/blob/main/BENCHMARK.md 'vanityx benchmark'
-[benchmark_script]: /Liumingxun/vanityx/blob/main/package.json#L28 'vanityx benchmark script'
+[createx]: https://github.com/pcaversaccio/createx 'createx factory'
+[vanityx]: https://github.com/Liumingxun/vanityx/blob/main/README.md 'vanityx main package'
+[releases]: https://github.com/Liumingxun/vanityx/releases 'vanityx releases'
+[benchmark]: https://github.com/Liumingxun/vanityx/blob/main/BENCHMARK.md 'vanityx benchmark'
+[benchmark_script]: https://github.com/Liumingxun/vanityx/blob/main/package.json#L28 'vanityx benchmark script'
