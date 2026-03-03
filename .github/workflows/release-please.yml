@@ -41,4 +41,3 @@ jobs:
       - run: gh release upload ${{ needs.release-please.outputs.tag_name }} ./dist/*
         env:
           GH_TOKEN: ${{ github.token }}
-
