@@ -23,6 +23,7 @@ jobs:
         id: release
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
 
   release:
     needs: release-please
@@ -37,7 +38,7 @@ jobs:
         with:
           run_install: true
       - run: pnpm build
-      - run: gh release upload ./dist/*
+      - run: gh release upload ${{ needs.release-please.outputs.tag_name }} ./dist/*
         env:
           GH_TOKEN: ${{ github.token }}
 
