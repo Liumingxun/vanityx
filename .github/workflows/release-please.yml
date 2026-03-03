@@ -6,6 +6,10 @@ on:
       - main
       - ci/*
   workflow_dispatch:
+    inputs:
+      force_release:
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -22,7 +26,7 @@ jobs:
 
   release:
     needs: release-please
-    if: ${{ false && needs.release-please.outputs.release_created }}
+    if: ${{ needs.release-please.outputs.release_created || inputs.force_release }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
