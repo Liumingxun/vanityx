@@ -21,14 +21,19 @@ jobs:
       release_created: ${{ steps.release.outputs.release_created }}
 
   release:
-    runs-on: ubuntu-latest
     needs: release-please
     if: ${{ false && needs.release-please.outputs.release_created }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v4.2.0
         with:
           run_install: true
-      - run: pnpm -F cli bun build
-      
-      - run: echo ""
+      - run: pnpm build
+      - run: gh release upload ./dist/*
+        env:
+          GH_TOKEN: ${{ github.token }}
+

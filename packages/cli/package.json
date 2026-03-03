@@ -25,7 +25,7 @@
   ],
   "scripts": {
     "test": "bun run ./bin/index.ts",
-    "build": "bun build --compile --bytecode --minify bin/index.ts src/worker.ts --outfile=dist/vanityx"
+    "build": "bun run ./scripts/build.ts"
   },
   "dependencies": {
     "@cliffy/command": "catalog:",
