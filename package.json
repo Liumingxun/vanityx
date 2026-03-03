@@ -26,8 +26,12 @@
     "src",
     "types"
   ],
+  "engines": {
+    "bun": "1.3.9"
+  },
   "scripts": {
-    "bench": "bun run --sequential bench/*.bench.ts"
+    "bench": "bun run --sequential bench/*.bench.ts",
+    "build": "pnpm -F cli build"
   },
   "dependencies": {
     "@vanityx/createx_guard": "workspace:*",

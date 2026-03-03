@@ -1,0 +1,44 @@
+name: release-please
+
+on:
+  push:
+    branches:
+      - main
+      - ci/*
+  workflow_dispatch:
+    inputs:
+      force_release:
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+
+  release:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created || inputs.force_release }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4.2.0
+        with:
+          run_install: true
+      - run: pnpm build
+      - run: gh release upload ${{ needs.release-please.outputs.tag_name }} ./dist/*
+        env:
+          GH_TOKEN: ${{ github.token }}
+
