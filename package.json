@@ -1,7 +1,7 @@
 {
   "name": "vanityx",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "packageManager": "pnpm@10.28.0",
   "description": "A TypeScript library for searching Ethereum CREATE2 vanity addresses.",
   "author": "lime <liumingxun@yeah.net>",

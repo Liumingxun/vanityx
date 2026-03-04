@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1 (2026-03-04)
+
+**Full Changelog**: https://github.com/Liumingxun/vanityx/compare/v1.0.0...v1.0.1
+
 ## 1.0.0 (2026-03-03)
 
 ## What's Changed
