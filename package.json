@@ -1,5 +1,5 @@
 {
-  "name": "vanityx",
+  "name": "@vanityx/core",
   "type": "module",
   "version": "1.0.0",
   "packageManager": "pnpm@10.28.0",

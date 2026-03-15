@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@cliffy/command": "catalog:",
-    "vanityx": "workspace:*"
+    "@vanityx/core": "workspace:*"
   },
   "devDependencies": {
     "viem": "catalog:"
