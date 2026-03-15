@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.1 (2026-03-15)
+
+## What's Changed
+* ci: configure npm publish action through trusted publishing by @Liumingxun in https://github.com/Liumingxun/vanityx/pull/13
+* ci: update release-please config by @Liumingxun in https://github.com/Liumingxun/vanityx/pull/15
+
+
+**Full Changelog**: https://github.com/Liumingxun/vanityx/compare/v1.0.0...v1.0.1
+
 ## 1.0.0 (2026-03-04)
 
 ## What's Changed
