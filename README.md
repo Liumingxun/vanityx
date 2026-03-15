@@ -27,9 +27,9 @@ If you want a tool with multi-threaded parallel search, download the prebuilt bi
 ## Installation
 
 ```bash
-pnpm add vanityx
+pnpm add @vanityx/core
 # or
-bun add vanityx
+bun add @vanityx/core
 ```
 
 ## Quick start
@@ -39,8 +39,8 @@ bun add vanityx
 When `deployer` is the CreateX factory address and protections are enabled, `vanityx` follows CreateX rules and returns `guardedSalt`.
 
 ```ts
-import { searchVanity } from 'vanityx'
-import { CREATEX_FACTORY_ADDRESS } from 'vanityx/schema'
+import { searchVanity } from '@vanityx/core'
+import { CREATEX_FACTORY_ADDRESS } from '@vanityx/core/schema'
 
 const result = searchVanity({
   pattern: '0x1234*',
@@ -58,7 +58,7 @@ console.log(result)
 ### Standard CREATE2 for other deployers
 
 ```ts
-import { searchVanity } from 'vanityx'
+import { searchVanity } from '@vanityx/core'
 
 const result = searchVanity({
   pattern: '0xcafe*',

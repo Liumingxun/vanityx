@@ -27,9 +27,9 @@
 ## 安装
 
 ```bash
-pnpm add vanityx
+pnpm add @vanityx/core
 # or
-bun add vanityx
+bun add @vanityx/core
 ```
 
 ## 快速开始
@@ -39,8 +39,8 @@ bun add vanityx
 当 `deployer` 是 CreateX 工厂地址并且启用了保护模式时，`vanityx` 会自动走 CreateX 规则并返回 `guardedSalt`。
 
 ```ts
-import { searchVanity } from 'vanityx'
-import { CREATEX_FACTORY_ADDRESS } from 'vanityx/schema'
+import { searchVanity } from '@vanityx/core'
+import { CREATEX_FACTORY_ADDRESS } from '@vanityx/core/schema'
 
 const result = searchVanity({
   pattern: '0x1234*',
@@ -58,7 +58,7 @@ console.log(result)
 ### 标准 CREATE2，适用于其他 deployer
 
 ```ts
-import { searchVanity } from 'vanityx'
+import { searchVanity } from '@vanityx/core'
 
 const result = searchVanity({
   pattern: '0xcafe*',
