@@ -6,6 +6,11 @@
   "description": "A command-line tool for searching Ethereum CREATE2 vanity addresses.",
   "author": "lime <liumingxun@yeah.net>",
   "license": "MPL-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liumingxun/vanityx.git",
+    "directory": "packages/cli"
+  },
   "keywords": [
     "vanity",
     "address",
