@@ -1,4 +1,4 @@
-import type { Input, Result } from 'vanityx'
+import type { Input, Result } from '@vanityx/core'
 
 export interface SearchOptions {
   threads: number

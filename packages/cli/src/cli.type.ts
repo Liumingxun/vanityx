@@ -1,6 +1,6 @@
 import type { ArgumentValue } from '@cliffy/command'
 import type { Address, Hash, Hex } from 'viem'
-import { AddressSchema, HashSchema, HexPatternSchema } from 'vanityx/schema'
+import { AddressSchema, HashSchema, HexPatternSchema } from '@vanityx/core/schema'
 
 export function hashType({ value }: ArgumentValue): Hash {
   const result = HashSchema.safeParse(value)

@@ -1,5 +1,5 @@
-import type { Input, Options, Result, Stats } from 'vanityx'
-import { searchVanity } from 'vanityx'
+import type { Input, Options, Result, Stats } from '@vanityx/core'
+import { searchVanity } from '@vanityx/core'
 
 interface WorkerMessage {
   type: 'search'

@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 
-import type { CreatexOpts } from 'vanityx'
+import type { CreatexOpts } from '@vanityx/core'
 import process from 'node:process'
 import { addressType, hashType, patternType } from '#cli.type'
 import { searchWithWorkers } from '#manager'
