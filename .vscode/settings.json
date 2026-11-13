@@ -19,5 +19,8 @@
   "editor.formatOnSaveMode": "file",
   "editor.codeActionsOnSave": {
     "source.fixAll.oxc": "explicit"
+  },
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
   }
 }
