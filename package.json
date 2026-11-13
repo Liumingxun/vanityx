@@ -1,0 +1,43 @@
+{
+  "name": "hardhat3-viteplus-template",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Hardhat 3 + viem + Vite+ starter template for EVM smart contract projects",
+  "keywords": [
+    "ethereum",
+    "hardhat",
+    "solidity",
+    "viem",
+    "vite-plus"
+  ],
+  "type": "module",
+  "scripts": {
+    "prepare": "vp config",
+    "check": "vp check",
+    "hardhat": "vpx hardhat",
+    "build": "vpx hardhat build",
+    "test": "vpx hardhat test",
+    "test:solidity": "vpx hardhat test solidity",
+    "test:node": "vpx hardhat test nodejs",
+    "run": "vpx hardhat run",
+    "deploy": "vpx hardhat ignition deploy",
+    "clean": "vpx hardhat clean"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ignition": "^3.1.9",
+    "@nomicfoundation/hardhat-toolbox-viem": "^5.0.7",
+    "@types/node": "^26.6.5",
+    "forge-std": "github:foundry-rs/forge-std#v1.17.0",
+    "hardhat": "^3.21.2",
+    "typescript": "^7.0.2",
+    "viem": "^2.57.16",
+    "vite-plus": "catalog:"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.18.0",
+      "onFail": "download"
+    }
+  }
+}
