@@ -1,15 +1,16 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "lib": ["es2023"],
+    "lib": ["ESNext", "DOM"],
     "moduleDetection": "force",
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "resolveJsonModule": true,
-    "types": ["node"],
+    "types": ["node", "rolldown-plugin-wasm/types"],
     "strict": true,
     "noUnusedLocals": true,
     "declaration": true,
+    "allowJs": true,
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "esModuleInterop": true,

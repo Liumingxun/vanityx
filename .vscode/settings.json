@@ -21,6 +21,10 @@
     "source.fixAll.oxc": "explicit"
   },
   "[go]": {
+    "editor.codeActionsOnSave": {},
     "editor.defaultFormatter": "golang.go"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
   }
 }

@@ -19,3 +19,5 @@ dist
 /snapshots
 
 .vitest/
+src/wasm_exec.cjs
+src/vanityx.wasm
