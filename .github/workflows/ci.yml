@@ -1,0 +1,37 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - uses: acifani/setup-tinygo@v3
+        with:
+          tinygo-version: "0.43.0"
+          install-binaryen: "false"
+
+      - uses: voidzero-dev/setup-vp@v1.21.2
+        with:
+          node-version: "24"
+          cache: true
+
+      - run: go test ./...
+
+      - run: vp check
+
+      - run: vp run test

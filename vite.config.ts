@@ -47,6 +47,11 @@ export default defineConfig({
       },
       pack: {
         command: "vp pack",
+        dependsOn: ["clean", "buildWasm"],
+        cache: false,
+      },
+      test: {
+        command: "vp test",
         dependsOn: ["buildWasm"],
         cache: false,
       },

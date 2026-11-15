@@ -11,13 +11,8 @@ dist
 .env.*
 !.env.example
 
-# hardhat
-/artifacts
-/cache
-/coverage
-/.gas-snapshot
-/snapshots
-
 .vitest/
+
+# generated from the Go sources by the buildWasm task
 src/wasm_exec.cjs
 src/vanityx.wasm

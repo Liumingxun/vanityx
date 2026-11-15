@@ -1,34 +1,41 @@
 {
-  "name": "hardhat3-viteplus-template",
-  "version": "0.0.0",
-  "private": true,
-  "description": "Hardhat 3 + viem + Vite+ starter template for EVM smart contract projects",
+  "name": "@vanityx/core",
+  "version": "2.0.0",
+  "description": "A TypeScript library for searching Ethereum CREATE2 vanity addresses.",
   "keywords": [
+    "create2",
+    "createx",
     "ethereum",
-    "hardhat",
-    "solidity",
-    "viem",
-    "vite-plus"
+    "vanity",
+    "wasm"
+  ],
+  "license": "MPL-2.0",
+  "author": "lime <liumingxun@yeah.net>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liumingxun/vanityx-next.git"
+  },
+  "files": [
+    "dist"
   ],
   "type": "module",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    }
+  },
   "scripts": {
     "prepare": "vp config",
     "check": "vp check",
-    "hardhat": "vpx hardhat",
-    "build": "vpx hardhat build",
-    "test": "vpx hardhat test",
-    "test:solidity": "vpx hardhat test solidity",
-    "test:node": "vpx hardhat test nodejs",
-    "run": "vpx hardhat run",
-    "deploy": "vpx hardhat ignition deploy",
-    "clean": "vpx hardhat clean"
+    "build": "vp run pack",
+    "clean": "rm -rf dist"
   },
   "devDependencies": {
-    "@nomicfoundation/hardhat-ignition": "^3.1.9",
-    "@nomicfoundation/hardhat-toolbox-viem": "^5.0.7",
     "@types/node": "^26.6.5",
-    "forge-std": "github:foundry-rs/forge-std#v1.17.0",
-    "hardhat": "^3.21.2",
     "rolldown-plugin-wasm": "^0.3.2",
     "typescript": "^7.0.2",
     "viem": "^2.57.16",
