@@ -32,7 +32,9 @@ export default defineConfig({
       typeCheck: true,
     },
   },
-  fmt: {},
+  fmt: {
+    ignorePatterns: ["docs"],
+  },
   run: {
     tasks: {
       buildWasm: {
