@@ -32,6 +32,6 @@ jobs:
 
       - run: go test ./...
 
-      - run: vp check
+      - run: vp run check
 
       - run: vp run test

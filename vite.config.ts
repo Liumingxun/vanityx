@@ -14,7 +14,7 @@ const wasmInputs = [
 
 export default defineConfig({
   staged: {
-    "*": "vp check --fix",
+    "*": "vp run check --fix",
   },
   pack: [
     {
@@ -50,6 +50,11 @@ export default defineConfig({
       pack: {
         command: "vp pack",
         dependsOn: ["clean", "buildWasm"],
+        cache: false,
+      },
+      check: {
+        command: "vp check",
+        dependsOn: ["buildWasm"],
         cache: false,
       },
       test: {

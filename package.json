@@ -30,7 +30,6 @@
   },
   "scripts": {
     "prepare": "vp config",
-    "check": "vp check",
     "build": "vp run pack",
     "clean": "rm -rf dist"
   },
