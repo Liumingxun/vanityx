@@ -56,3 +56,17 @@ Commit messages must follow [Conventional Commits], because release-please deriv
 
 [release-please]: https://github.com/googleapis/release-please "release-please"
 [conventional commits]: https://www.conventionalcommits.org/ "Conventional Commits"
+
+## Knowledge base
+
+- Path: `docs/` — tracked by this repository, committed together with the code.
+- Entry: `docs/moc.md`
+- Language: English
+- Retrieval order: project code → this file → `AGENTS.local.md` → `docs/moc.md` → module documents
+
+## Memory loop
+
+- Before coding: read `docs/moc.md` to locate the module, read 1–3 related documents, then read 1–3 implementation files; stop once the target files are identified.
+- After coding: record architecture decisions in this file or `docs/00-architecture/`; append changes and pitfalls to `docs/01-work-log/<short-topic>.md`, using a short kebab-case topic such as `kb-init.md`; extract a reusable pattern into a skill once it appears twice or more.
+- Distill weekly or every 30 tasks: promote conclusions that repeat three times or more into this file or `docs/00-architecture/`, and mark superseded entries instead of deleting them silently.
+- Conflicts: code wins; fix the stale document in the same change.

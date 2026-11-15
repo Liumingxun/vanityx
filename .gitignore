@@ -16,3 +16,7 @@ dist
 # generated from the Go sources by the buildWasm task
 src/wasm_exec.cjs
 src/vanityx.wasm
+docs/01-work-log/*.md
+
+# personal agent memory
+AGENTS.local.md
