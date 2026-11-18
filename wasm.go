@@ -6,7 +6,7 @@ import (
 	"context"
 	"unsafe"
 
-	s "github.com/liumingxun/vanityx/pkg/search"
+	vs "github.com/liumingxun/vanityx/pkg/search"
 
 	e "github.com/luxfi/geth/common"
 )
@@ -61,7 +61,7 @@ func search(patternLen int32) int32 {
 		return statusError
 	}
 
-	pair, err := s.SearchVanity(context.Background(), &s.Config{
+	pair, err := vs.SearchVanity(context.Background(), &vs.Config{
 		Pattern:      string(patternBuf[:patternLen]),
 		Deployer:     e.Address(deployerBuf),
 		InitcodeHash: e.Hash(initcodeHashBuf),

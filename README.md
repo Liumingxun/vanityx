@@ -57,6 +57,20 @@ Searches for a CREATE2 salt whose address matches `config.pattern`.
 
 Returns `{ salt, address }` when a match is found, or `null` if the nonce space is exhausted. A single search blocks until it finds a match, so long patterns should be searched from a Web Worker.
 
+## Command line
+
+The `vanityx` command runs one search goroutine per CPU by default and stops at the first match:
+
+```bash
+go run github.com/liumingxun/vanityx/cmd/vanityx \
+  -pattern cafe \
+  -deployer 0x1111111111111111111111111111111111111111 \
+  -initcode-hash 0x0000000000000000000000000000000000000000000000000000000000000000 \
+  -workers 8
+```
+
+`-pattern`, `-deployer`, and `-initcode-hash` are all required and must be passed explicitly. `-workers` defaults to the number of CPUs. Every worker calls the same single-threaded engine with its own random salt prefix, so the goroutines search independent salt spaces; the first match cancels the rest.
+
 ## Requirements
 
 - Node.js 22.10 or newer, or any runtime that supports WebAssembly.
@@ -66,6 +80,7 @@ Returns `{ salt, address }` when a match is found, or `null` if the nonce space 
 ```
 wasm.go           the Go entry point exported to wasm
 pkg/search/       the Go search engine and its tests
+cmd/vanityx/      multi-goroutine CLI wrapper around the engine
 src/              TypeScript bindings around the wasm module
 tests/            TypeScript tests
 scripts/          helper that copies the tinygo wasm_exec.js glue

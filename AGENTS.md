@@ -7,6 +7,7 @@ A TypeScript library for searching Ethereum CREATE2 vanity addresses. The search
 ```
 wasm.go            Go entry point that exports the search functions to wasm
 pkg/search/        the Go search engine (search.go) and its tests (*_test.go)
+cmd/vanityx/       multi-goroutine CLI wrapper around the engine
 src/               TypeScript bindings: index.ts, types.ts
 tests/             TypeScript tests (*.test.ts)
 scripts/           prepare-go-wasm-helper.ts copies tinygo's wasm_exec.js into src/
@@ -20,6 +21,7 @@ vite.config.ts     Vite+ formatting, linting, packaging, and build tasks
 - `vp run test` — build the wasm module, then run the TypeScript tests.
 - `vp test` — run the TypeScript tests only; this requires `src/vanityx.wasm` to exist.
 - `go test ./...` — run the Go tests.
+- `go run ./cmd/vanityx -pattern cafe -deployer 0x4e59b44847b379578588920ca78fbf26c0b4956c -initcode-hash 0x0000000000000000000000000000000000000000000000000000000000000000 -workers 8` — run the CLI with multiple search goroutines; `-pattern`, `-deployer`, and `-initcode-hash` are required.
 - `vp run pack` — build the publishable bundle into `dist/`.
 - `vp pack` — run the packer directly, without building the wasm module first.
 - `vpx ./scripts/prepare-go-wasm-helper.ts` — refresh `src/wasm_exec.cjs` after upgrading TinyGo.
@@ -41,6 +43,7 @@ Both `pack` and `test` depend on `buildWasm`, so a clean checkout builds the mod
 - Tests import `describe`/`it`/`expect` from `vite-plus/test`.
 - The public API is exported from `src/index.ts`; types live in `src/types.ts`.
 - Go code must stay compilable for both `go test` and the TinyGo wasm target, so avoid packages TinyGo cannot build.
+- Multi-goroutine orchestration lives in `cmd/vanityx`; `pkg/search` stays single-threaded so the wasm target still builds with TinyGo's `-scheduler=none`.
 - The wasm memory layout is a contract between `wasm.go` (buffer sizes, status codes) and `src/index.ts`; change both together.
 
 ## Releases
