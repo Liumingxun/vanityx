@@ -15,3 +15,34 @@ jobs:
     steps:
       - uses: googleapis/release-please-action@v4
         id: release
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+
+  release:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - uses: acifani/setup-tinygo@v3
+        with:
+          tinygo-version: "0.43.0"
+          install-binaryen: "false"
+
+      - uses: voidzero-dev/setup-vp@v1.21.2
+        with:
+          node-version: "24"
+          cache: true
+
+      - name: Build wasm module and bundle the package
+        run: vpr build --no-cache
+
+      - name: Publish to npm
+        run: vp pm publish --access public --provenance
