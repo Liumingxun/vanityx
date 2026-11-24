@@ -81,9 +81,6 @@ func run() error {
 // returns the first match. Each worker calls SearchVanity with its own random
 // salt prefix, so workers do not repeat each other's salts.
 func search(ctx context.Context, config *vs.Config, workers int) (*vs.Pair, error) {
-	if workers < 1 {
-		workers = 1
-	}
 	if workers == 1 {
 		return vs.SearchVanity(ctx, config)
 	}
