@@ -33,7 +33,7 @@ export default defineConfig({
     },
   },
   fmt: {
-    ignorePatterns: ["docs"],
+    ignorePatterns: ["docs", ".release-please-manifest.json", "CHANGELOG.md"],
   },
   run: {
     tasks: {
