@@ -2,6 +2,12 @@
 
 ## 2.0.0 (2026-11-24)
 
+## What's Changed
+
+- chore(main): release 2.0.0 by @github-actions[bot] in https://github.com/Liumingxun/vanityx/pull/19
+- ci: release process and align repository metadata by @Liumingxun in https://github.com/Liumingxun/vanityx/pull/20
+- chore(release): reset manifest and version to 1.0.2 by @Liumingxun in https://github.com/Liumingxun/vanityx/pull/21
+
 **Full Changelog**: https://github.com/Liumingxun/vanityx/compare/v1.0.2...v2.0.0
 
 ## 1.0.2 (2026-03-15)
