@@ -1,6 +1,6 @@
 {
   "name": "@vanityx/core",
-  "version": "2.0.0",
+  "version": "1.0.2",
   "description": "A TypeScript library for searching Ethereum CREATE2 vanity addresses.",
   "keywords": [
     "create2",
@@ -13,7 +13,7 @@
   "author": "lime <liumingxun@yeah.net>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/liumingxun/vanityx-next.git"
+    "url": "git+https://github.com/liumingxun/vanityx.git"
   },
   "files": [
     "dist"
